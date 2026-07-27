@@ -38,6 +38,7 @@ const createSendToken = (res, user) => {
 };
 
 // Controller to register new user
+// POST /api/v1/auth/register
 const register = catchAsync(async (req, res, next) => {
     const { fullname, email, password } = req.body;
 
@@ -56,6 +57,7 @@ const register = catchAsync(async (req, res, next) => {
 });
 
 // Controller to login user
+// POST /api/v1/auth/login
 const login = catchAsync(async (req, res, next) => {
     const { email, password } = req.body;
 
@@ -75,6 +77,7 @@ const login = catchAsync(async (req, res, next) => {
 });
 
 // Controller to logout user (clear cookies)
+// DELETE /api/v1/auth/logout
 const logout = catchAsync(async (req, res, next) => {
     res.clearCookie("lt", {
         secure: process.env.NODE_MODE === "prod",
@@ -89,6 +92,7 @@ const logout = catchAsync(async (req, res, next) => {
 });
 
 // Controller to auto login
+// GET /api/v1/auth/me
 const getMe = catchAsync(async (req, res, next) => {
     res.status(200).json({
         status: "success",
@@ -100,6 +104,7 @@ const getMe = catchAsync(async (req, res, next) => {
 });
 
 // Controller to handle google authenticate
+// GET /api/v1/auth/google/callback
 const googleCallback = catchAsync(async (req, res, next) => {
     const token = signToken(req.user);
 

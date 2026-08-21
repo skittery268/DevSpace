@@ -20,8 +20,6 @@ const globalErrorHandler = require("./controllers/error.controller");
 
 // Routers
 const authRouter = require("./routers/auth.router");
-const projectRouter = require("./routers/project.router");
-const nodeRouter = require("./routers/node.router");
 
 // -------------------------------------IMPORTS-------------------------------------
 
@@ -45,8 +43,6 @@ app.use(hpp());
 
 // Routers
 app.use("/api/v1/auth", authRouter);
-app.use("/api/v1/projects", projectRouter);
-app.use("/api/v1/nodes", nodeRouter);
 
 // Global error handler
 app.use(globalErrorHandler);
@@ -56,11 +52,19 @@ const startServer = async () => {
     try {
         await connectDB();
 
-        app.listen(process.env.PORT, () => {
+        const server = app.listen(process.env.PORT, () => {
             console.log(`Server running on port ${process.env.PORT}!`);
         });
+
+        server.on("error", (err) => {
+            console.log("Failed to start server: ", err);
+
+            process.exit(1);
+        })
     } catch (err) {
-        throw new Error(err);
+        console.log("Failed to start server: ", err);
+
+        process.exit(1);
     };
 };
 

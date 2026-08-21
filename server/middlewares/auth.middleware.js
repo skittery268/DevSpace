@@ -12,17 +12,21 @@ const jwt = require("jsonwebtoken");
 
 // Function to protect routes (check users tokens)
 const protect = catchAsync(async (req, res, next) => {
-    const { lt } = req.cookies;
+    const { at } = req.cookies;
 
-    if (!lt) {
+    if (!at) {
         return next(new AppError("Authorization token is required!", 400));
     };
 
-    const payload = await jwt.verify(lt, process.env.JWT_SECRET);
+    const payload = await jwt.verify(at, process.env.JWT_SECRET);
 
     if (!payload) {
-        return next(new AppError("Invalid token", 400));
+        return next(new AppError("Invalid token!", 400));
     };
+
+    if (payload.scope !== "session") {
+        return next(new AppError("Invalid Token!", 400));
+    }
 
     const user = await User.findById(payload.id);
 

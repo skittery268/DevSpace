@@ -1,13 +1,14 @@
+// Models
+const Order = require("../models/order.model");
+
 // Utils
 const AppError = require("../utils/appError.util");
 const catchAsync = require("../utils/catchAsync.util");
 
-// Models
-const Order = require("../models/order.model");
-
 // -------------------------------------IMPORTS-------------------------------------
 
 // Controller to get user orders
+// GET /api/v1/order
 const getUserOrders = catchAsync(async (req, res, next) => {
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 12;
@@ -31,6 +32,7 @@ const getUserOrders = catchAsync(async (req, res, next) => {
 });
 
 // Controller to delete user order
+// DELETE /api/v1/order/:orderId
 const deleteOrder = catchAsync(async (req, res, next) => {
     const { orderId } = req.params;
 
@@ -53,6 +55,7 @@ const deleteOrder = catchAsync(async (req, res, next) => {
 });
 
 // Controller to change order status
+// PATCH /api/v1/order/:orderId
 const changeStatus = catchAsync(async (req, res, next) => {
     const { orderId } = req.params;
     const { status } = req.body;

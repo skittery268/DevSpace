@@ -34,6 +34,14 @@ const protect = catchAsync(async (req, res, next) => {
         return next(new AppError("User not found!", 404));
     };
 
+    if (user.isDeleted) {
+        return next(new AppError("This account is deleted!", 401));
+    };
+
+    if (!user.isVerified) {
+        return next(new AppError("Verify your account first!", 401));
+    };
+
     req.user = user;
 
     next();

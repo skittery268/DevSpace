@@ -1,15 +1,16 @@
-// Utils
-const AppError = require("../utils/appError.util");
-const catchAsync = require("../utils/catchAsync.util");
-
 // Models
 const Comment = require("../models/comment.model");
 const Review = require("../models/review.model");
 const Product = require("../models/product.model");
 
+// Utils
+const AppError = require("../utils/appError.util");
+const catchAsync = require("../utils/catchAsync.util");
+
 // -------------------------------------IMPORTS-------------------------------------
 
 // Controller to get all product reviews
+// GET /api/v1/review/:productId
 const getProductReviews = catchAsync(async (req, res, next) => {
     const { productId } = req.params;
     const page = Number(req.query.page) || 1;
@@ -35,6 +36,7 @@ const getProductReviews = catchAsync(async (req, res, next) => {
 });
 
 // Controller to create new review
+// POST /api/v1/review/:productId
 const createReview = catchAsync(async (req, res, next) => {
     const { productId } = req.params;
     const { content, rating } = req.body;
@@ -65,6 +67,7 @@ const createReview = catchAsync(async (req, res, next) => {
 });
 
 // Controller to delete review by id
+// DELETE /api/v1/review/:reviewId
 const deleteReview = catchAsync(async (req, res, next) => {
     const { reviewId } = req.params;
 
@@ -80,7 +83,7 @@ const deleteReview = catchAsync(async (req, res, next) => {
         return next(new AppError("Product not found!", 404));
     };
 
-    if (review.authorId.toString() != req.user._id.toString() && req.user.role !== "admin") {
+    if (review.authorId.toString() != req.user._id.toString() && req.user.role !== "admin" && req.user.role !== "moderator") {
         return next(new AppError("You cant delete this review!", 401));
     };
 
@@ -97,6 +100,7 @@ const deleteReview = catchAsync(async (req, res, next) => {
 });
 
 // Controller to edit review by id
+// PATCH /api/v1/review/:reviewId
 const editReview = catchAsync(async (req, res, next) => {
     const { reviewId } = req.params;
     const { content, rating } = req.body;

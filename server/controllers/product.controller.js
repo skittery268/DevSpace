@@ -13,6 +13,7 @@ const cloudinary = require("../configs/cloudinary.config");
 // -------------------------------------IMPORTS-------------------------------------
 
 // Controller to get all products
+// GET /api/v1/product
 const getProducts = catchAsync(async (req, res, next) => {
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 12;
@@ -37,6 +38,7 @@ const getProducts = catchAsync(async (req, res, next) => {
 });
 
 // Controller to get a single product by id
+// GET /api/v1/product/:productId
 const getProduct = catchAsync(async (req, res, next) => {
     const { productId } = req.params;
 
@@ -58,6 +60,7 @@ const getProduct = catchAsync(async (req, res, next) => {
 });
 
 // Controller to get products that belong to a category
+// GET /api/v1/product/category/:categoryId
 const getProductsByCategory = catchAsync(async (req, res, next) => {
     const { categoryId } = req.params;
     const page = Number(req.query.page) || 1;
@@ -85,6 +88,7 @@ const getProductsByCategory = catchAsync(async (req, res, next) => {
 });
 
 // Controller to create new product
+// POST /api/v1/product/createproduct/:categoryId
 const createProduct = catchAsync(async (req, res, next) => {
     const { categoryId } = req.params;
     const { title, description, price, stock } = req.body;
@@ -146,6 +150,7 @@ const createProduct = catchAsync(async (req, res, next) => {
 });
 
 // Controller to delete product
+// DELETE /api/v1/product/deleteproduct/:productId
 const deleteProduct = catchAsync(async (req, res, next) => {
     const { productId } = req.params;
 
@@ -155,7 +160,7 @@ const deleteProduct = catchAsync(async (req, res, next) => {
         return next(new AppError("Product not found!", 404));
     }
 
-    if (product.universal.sellerId.toString() != req.user._id.toString() && req.user.role !== "admin") {
+    if (product.universal.sellerId.toString() != req.user._id.toString() && req.user.role !== "admin" && req.user.role !== "moderator") {
         return next(new AppError("You cant delete this product!", 401));
     }
 
@@ -172,6 +177,7 @@ const deleteProduct = catchAsync(async (req, res, next) => {
 });
 
 // Controller to edit product
+// PATCH /api/v1/product/editproduct/:productId
 const editProduct = catchAsync(async (req, res, next) => {
     const { productId } = req.params;
     const { title, description, price, stock, attributes } = req.body;

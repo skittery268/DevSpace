@@ -21,6 +21,9 @@ require("./configs/passport.config");
 // Global error controller
 const globalErrorHandler = require("./controllers/error.controller");
 
+// Middlewares
+const expressMongoSanitize = require("./middlewares/security.middleware");
+
 // Utils
 const AppError = require("./utils/appError.util");
 
@@ -31,6 +34,8 @@ const orderRouter = require("./routers/order.router");
 const paymentRouter = require("./routers/payment.router");
 const productRouter = require("./routers/product.router");
 const reviewRouter = require("./routers/review.router");
+const userRouter = require("./routers/user.router");
+const searchRouter = require("./routers/search.router");
 
 // -------------------------------------IMPORTS-------------------------------------
 
@@ -50,6 +55,7 @@ app.use(cors({
 }));
 app.use(helmet());
 app.use(hpp());
+app.use(expressMongoSanitize);
 
 // Test route to check running server or not
 app.get("/health", (req, res) => {
@@ -66,10 +72,8 @@ app.use("/api/v1/order", orderRouter);
 app.use("/api/v1/payment", paymentRouter);
 app.use("/api/v1/product", productRouter);
 app.use("/api/v1/review", reviewRouter);
-
-// app.get("/debug-sentry", function mainHandler(req, res) {
-//   throw new Error("My first Sentry error!");
-// });
+app.use("/api/v1/search", searchRouter);
+app.use("/api/v1/users", userRouter);
 
 app.all('/*splat', (req, res, next) => {
     next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));

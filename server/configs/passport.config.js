@@ -28,7 +28,8 @@ passport.use(
                         fullname: profile.displayName,
                         email: profile.emails[0].value,
                         googleId: profile.id,
-                        provider: "google"
+                        provider: "google",
+                        isVerified: true
                     });
                 } else {
                     user.googleId = profile.id;

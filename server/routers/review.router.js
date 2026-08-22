@@ -1,4 +1,4 @@
-// Models
+// Modules
 const express = require("express");
 
 // Controllers
@@ -7,7 +7,7 @@ const { getProductReviews, createReview, deleteReview, editReview } = require(".
 // Middlewares
 const { protect } = require("../middlewares/auth.middleware");
 
-// ----------------------------------------IMPORTS---------------------------------------
+// -------------------------------------IMPORTS-------------------------------------
 
 const reviewRouter = express.Router();
 

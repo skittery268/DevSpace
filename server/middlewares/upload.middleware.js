@@ -1,7 +1,7 @@
 // Modules
 const multer = require("multer");
 
-// ---------------------------------------IMPORTS---------------------------------------
+// -------------------------------------IMPORTS-------------------------------------
 
 // Memory storage
 const storage = multer.memoryStorage();

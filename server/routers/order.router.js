@@ -7,7 +7,7 @@ const { getUserOrders, deleteOrder, changeStatus } = require("../controllers/ord
 // Middlewares
 const { protect, allowedTo } = require("../middlewares/auth.middleware");
 
-// ---------------------------------------IMPORTS---------------------------------------
+// -------------------------------------IMPORTS-------------------------------------
 
 const orderRouter = express.Router();
 

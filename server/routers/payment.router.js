@@ -7,7 +7,7 @@ const { createCheckoutSession, stripeWebhook } = require('../controllers/payment
 // Middlewares
 const { protect } = require('../middlewares/auth.middleware');
 
-// ---------------------------------------IMPORTS---------------------------------------
+// -------------------------------------IMPORTS-------------------------------------
 
 const paymentRouter = express.Router();
 

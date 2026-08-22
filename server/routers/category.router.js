@@ -9,14 +9,14 @@ const { protect, allowedTo } = require("../middlewares/auth.middleware");
 const upload = require("../middlewares/upload.middleware");
 const parseFields = require("../middlewares/parseFields.middleware");
 
-// ---------------------------------------IMPORTS---------------------------------------
+// -------------------------------------IMPORTS-------------------------------------
 
 const categoryRouter = express.Router();
 
 // Route to get categories by query (page, limit)
 categoryRouter.get("/", getCategories);
 
-categoryRouter.use(protect, allowedTo("admin"));
+categoryRouter.use(protect, allowedTo("admin", "moderator"));
 
 // Route to create new category
 categoryRouter.post(

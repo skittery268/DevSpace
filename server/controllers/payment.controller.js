@@ -5,17 +5,16 @@ const Product = require('../models/product.model');
 
 // Modules
 const mongoose = require('mongoose');
+const stripe = require('stripe')(process.env.SECRET_STRIPE_KEY);
 
 // Utils
 const AppError = require('../utils/appError.util');
 const catchAsync = require('../utils/catchAsync.util');
 
-// Stripe import
-const stripe = require('stripe')(process.env.SECRET_STRIPE_KEY);
+// -------------------------------------IMPORTS-------------------------------------
 
-// ---------------------------------------IMPORTS---------------------------------------
-
-// Create session
+// Controller to create Stripe checkout session
+// POST /api/v1/payment/checkout
 const createCheckoutSession = catchAsync(async (req, res, next) => {
     const { userOrder, userInfo } = req.body;
 
@@ -134,7 +133,8 @@ const createCheckoutSession = catchAsync(async (req, res, next) => {
     });
 });
 
-// Controller to handle Webhook
+// Controller to handle Stripe webhook events
+// POST /api/v1/payment/webhook
 const stripeWebhook = catchAsync(async (req, res, next) => {
     const signature = req.headers["stripe-signature"];
 

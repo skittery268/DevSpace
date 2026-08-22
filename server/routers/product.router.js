@@ -9,7 +9,7 @@ const { protect, allowedTo } = require('../middlewares/auth.middleware');
 const upload = require('../middlewares/upload.middleware');
 const parseFields = require('../middlewares/parseFields.middleware');
 
-// ----------------------------------------IMPORTS---------------------------------------
+// -------------------------------------IMPORTS-------------------------------------
 
 const productRouter = express.Router();
 
@@ -21,6 +21,14 @@ productRouter.get("/category/:categoryId", getProductsByCategory);
 
 // Route to get a single product by id
 productRouter.get("/:productId", getProduct);
+
+// Route to delete product by id
+productRouter.delete(
+    "/deleteproduct/:productId",
+    protect,
+    allowedTo("seller", "moderator", "admin"),
+    deleteProduct
+);
 
 // Middlewares
 productRouter.use(protect, allowedTo("seller", "admin"));
@@ -38,11 +46,6 @@ productRouter.patch(
     upload.array("images", 5),
     parseFields,
     editProduct
-);
-// Route to delete product by id
-productRouter.delete(
-    "/deleteproduct/:productId",
-    deleteProduct
 );
 
 module.exports = productRouter;

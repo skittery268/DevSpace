@@ -87,6 +87,10 @@ const login = catchAsync(async (req, res, next) => {
         return next(new AppError("Verify your email first!", 400));
     };
 
+    if (user.isDeleted) {
+        return next(new AppError("This account deleted!", 400));
+    };
+
     if (user.twoFactorEnabled) {
         const token = jwt.sign({ id: user._id, scope: "2fa" }, process.env.JWT_SECRET, { expiresIn: process.env.TWO_FA_JWT_EXPIRES });
 
@@ -136,6 +140,10 @@ const getMe = catchAsync(async (req, res, next) => {
 // Controller to handle google authenticate
 // GET /api/v1/auth/google/callback
 const googleCallback = catchAsync(async (req, res, next) => {
+    if (req.user.isDeleted) {
+        return next(new AppError("This account is deleted!", 400));
+    };
+    
     if (req.user.twoFactorEnabled) {
         const token = jwt.sign({ id: req.user._id, scope: "2fa" }, process.env.JWT_SECRET, { expiresIn: process.env.TWO_FA_JWT_EXPIRES });
 
@@ -316,7 +324,7 @@ const setup2FA = catchAsync(async (req, res, next) => {
     });
 });
 
-// Controller to verify setip 2FA authentication
+// Controller to verify setup 2FA authentication
 // POST /api/v1/auth/2fa/verify-setup
 const verify2FASetup = catchAsync(async (req, res, next) => {
     const { code } = req.body;
@@ -382,6 +390,10 @@ const verify2FALogin = catchAsync(async (req, res, next) => {
 
     if (!user.twoFactorEnabled) {
         return next(new AppError("2FA is not enabled!", 400));
+    };
+
+    if (user.isDeleted) {
+        return next(new AppError("This account is deleted!", 401));
     };
 
     const result = await otplib.verify({

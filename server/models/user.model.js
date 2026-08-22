@@ -67,6 +67,13 @@ const userSchema = new mongoose.Schema({
     twoFactorSecret: {
         type: String,
         select: false,
+    },
+    isDeleted: {
+        type: Boolean,
+        default: false
+    },
+    deletedAt: {
+        type: Date
     }
 }, { timestamps: true });
 
@@ -89,7 +96,7 @@ userSchema.methods.sendVerificationToken = async function () {
 
     const html = `
         <h1>Verification Token</h1>
-        <a href="${link}">Click here to verifiy your email!</a>
+        <a href="${link}">Click here to verify your email!</a>
     `
 
     await sendMail(this.email, "Verification Email", html);

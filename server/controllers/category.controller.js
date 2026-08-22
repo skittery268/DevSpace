@@ -1,8 +1,8 @@
 // Models
 const Category = require("../models/category.model");
-const AppError = require("../utils/appError.util");
 
 // Utils
+const AppError = require("../utils/appError.util");
 const catchAsync = require("../utils/catchAsync.util");
 const uploadToCloudinary = require("../utils/uploadToCloudinary");
 
@@ -11,10 +11,11 @@ const cloudinary = require("../configs/cloudinary.config");
 
 // -------------------------------------IMPORTS-------------------------------------
 
-// Contoller to get categories
+// Controller to get categories
+// GET /api/v1/category
 const getCategories = catchAsync(async (req, res, next) => {
     const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 100;
+    const limit = Number(req.query.limit) || 12;
 
     const categories = await Category.find()
         .sort({ createdAt: -1 })
@@ -35,7 +36,8 @@ const getCategories = catchAsync(async (req, res, next) => {
     });
 });
 
-// Controller to create new category 
+// Controller to create new category
+// POST /api/v1/category/createcategory
 const createCategory = catchAsync(async (req, res, next) => {
     const { name, description, allowedAttributes, parentCategory } = req.body;
     const { file } = req;
@@ -65,6 +67,7 @@ const createCategory = catchAsync(async (req, res, next) => {
 });
 
 // Controller to delete category
+// DELETE /api/v1/category/deletecategory/:id
 const deleteCategory = catchAsync(async (req, res, next) => {
     const { id } = req.params;
 
@@ -87,6 +90,7 @@ const deleteCategory = catchAsync(async (req, res, next) => {
 });
 
 // Controller to edit category information
+// PATCH /api/v1/category/editcategory/:id
 const editCategory = catchAsync(async (req, res, next) => {
     const { name, description, allowedAttributes, parentCategory } = req.body;
     const { file } = req;

@@ -22,7 +22,7 @@ const paymentSchema = new mongoose.Schema({
     },
     totalAmount: {
         type: Number,
-        required: [true, "Total amount of products is requried"]
+        required: [true, "Total amount of products is required"]
     },
     stripeCustomerId: { 
         type: String 

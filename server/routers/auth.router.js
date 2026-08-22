@@ -34,7 +34,7 @@ authRouter.post("/forgot-password", forgotPassword);
 // Route to reset and change user password
 authRouter.post("/reset-password", resetPassword);
 
-// Route to start activate 2FA authentication in accoutn
+// Route to start activate 2FA authentication in account
 authRouter.post("/2fa/setup", protect, setup2FA);
 // Route to verify activate 2FA authentication in account
 authRouter.post("/2fa/verify-setup", protect, verify2FASetup);

@@ -45,15 +45,15 @@ const createSendToken = (res, user) => {
 // POST /api/v1/auth/register
 const register = catchAsync(async (req, res, next) => {
     const { fullname, email, password } = req.body;
+    
+    if (!fullname || !email || !password) {
+        return next(new AppError("All fields is required!", 400));
+    };
 
     const exist = await User.findOne({ email });
 
     if (exist) {
         return next(new AppError("User with this email already exists!", 400));
-    };
-
-    if (!fullname || !email || !password) {
-        return next(new AppError("All fields is required!", 400));
     };
 
     const user = await User.create({ fullname, email, password });

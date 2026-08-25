@@ -34,8 +34,8 @@ const searchProducts = catchAsync(async (req, res, next) => {
     const { title } = req.query;
 
     const products = await Product.find({ $or: [
-        { "universal.title": { $regex: title, $options: "i" } },
-        { "universal.description": { $regex: title, $options: "i" } }
+        { "universal.title": { $regex: title || "", $options: "i" } },
+        { "universal.description": { $regex: title || "", $options: "i" } }
     ] })
         .populate(["universal.category", "universal.sellerId"])
         .lean();

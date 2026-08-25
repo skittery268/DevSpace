@@ -7,11 +7,13 @@ const catchAsync = require("../utils/catchAsync.util");
 
 // -------------------------------------IMPORTS-------------------------------------
 
+const allowedStatus = ["confirmed", "processing", "shipped", "delivered", "completed", "canceled", ]
+
 // Controller to get user orders
 // GET /api/v1/order
 const getUserOrders = catchAsync(async (req, res, next) => {
-    const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 12;
+    const page = Math.max(1, Number(req.query.page)) || 1;
+    const limit = Math.min(Number(req.query.limit), 100) || 12;
 
     const orders = await Order.find({ userId: req.user._id })
         .sort({ createdAt: -1 })
@@ -43,7 +45,7 @@ const deleteOrder = catchAsync(async (req, res, next) => {
     };
 
     if (order.userId.toString() != req.user._id.toString()) {
-        return next(new AppError("You cant delete this order!", 401));
+        return next(new AppError("You cant delete this order!", 403));
     };
 
     await Order.findByIdAndDelete(orderId);
@@ -60,10 +62,18 @@ const changeStatus = catchAsync(async (req, res, next) => {
     const { orderId } = req.params;
     const { status } = req.body;
 
+    if (!allowedStatus.includes(status)) {
+        return next(new AppError("This status not allowed!", 400));
+    };
+
     const order = await Order.findById(orderId);
 
     if (!order) {
         return next(new AppError("Order not found!", 404));
+    };
+
+    if (order.status === "delivered" && status === "confirmed") {
+        return next(new AppError("You cant change delivered order for confirmed!", 400));
     };
 
     order.status = status;

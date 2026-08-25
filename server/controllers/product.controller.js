@@ -9,14 +9,16 @@ const uploadToCloudinary = require("../utils/uploadToCloudinary");
 
 // Configs
 const cloudinary = require("../configs/cloudinary.config");
+const Review = require("../models/review.model");
+const Comment = require("../models/comment.model");
 
 // -------------------------------------IMPORTS-------------------------------------
 
 // Controller to get all products
 // GET /api/v1/product
 const getProducts = catchAsync(async (req, res, next) => {
-    const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 12;
+    const page = Math.max(1, Number(req.query.page)) || 1;
+    const limit = Math.min(Number(req.query.limit), 100) || 12;
 
     const products = await Product.find()
         .sort({ createdAt: -1 })
@@ -63,8 +65,8 @@ const getProduct = catchAsync(async (req, res, next) => {
 // GET /api/v1/product/category/:categoryId
 const getProductsByCategory = catchAsync(async (req, res, next) => {
     const { categoryId } = req.params;
-    const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 12;
+    const page = Math.max(1, Number(req.query.page)) || 1;
+    const limit = Math.min(Number(req.query.limit), 100) || 12;
 
     const filter = { "universal.category": categoryId };
 
@@ -161,13 +163,20 @@ const deleteProduct = catchAsync(async (req, res, next) => {
     }
 
     if (product.universal.sellerId.toString() != req.user._id.toString() && req.user.role !== "admin" && req.user.role !== "moderator") {
-        return next(new AppError("You cant delete this product!", 401));
+        return next(new AppError("You cant delete this product!", 403));
     }
 
     for (const image of product.universal.images) {
         await cloudinary.uploader.destroy(image.public_id);
     }
 
+    const reviews = await Review.find({ productId });
+
+    for (const review of reviews) {
+        await Comment.findByIdAndDelete(review.commentId);
+    };
+
+    await Review.deleteMany({ productId });
     await Product.findByIdAndDelete(productId);
 
     res.status(200).json({
@@ -190,7 +199,7 @@ const editProduct = catchAsync(async (req, res, next) => {
     }
 
     if (product.universal.sellerId.toString() != req.user._id.toString()) {
-        return next(new AppError("You cant edit this product!", 401));
+        return next(new AppError("You cant edit this product!", 403));
     }
 
     if (title) product.universal.title = title;

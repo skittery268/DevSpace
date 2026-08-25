@@ -13,8 +13,8 @@ const catchAsync = require("../utils/catchAsync.util");
 // GET /api/v1/review/:productId
 const getProductReviews = catchAsync(async (req, res, next) => {
     const { productId } = req.params;
-    const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 12;
+    const page = Math.max(1, Number(req.query.page)) || 1;
+    const limit = Math.min(Number(req.query.limit), 100) || 12;
 
     const reviews = await Review.find({ productId })
         .populate(["authorId", "commentId"])
@@ -84,9 +84,10 @@ const deleteReview = catchAsync(async (req, res, next) => {
     };
 
     if (review.authorId.toString() != req.user._id.toString() && req.user.role !== "admin" && req.user.role !== "moderator") {
-        return next(new AppError("You cant delete this review!", 401));
+        return next(new AppError("You cant delete this review!", 403));
     };
 
+    await Comment.findByIdAndDelete(review.commentId);
     await Review.findByIdAndDelete(reviewId);
 
     product.universal.reviewsCount--;
@@ -112,7 +113,7 @@ const editReview = catchAsync(async (req, res, next) => {
     };
 
     if (review.authorId.toString() != req.user._id.toString()) {
-        return next(new AppError("You cant edit this review!", 401));
+        return next(new AppError("You cant edit this review!", 403));
     };
 
     if (rating) review.rating = rating;

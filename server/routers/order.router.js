@@ -6,13 +6,18 @@ const { getUserOrders, deleteOrder, changeStatus } = require("../controllers/ord
 
 // Middlewares
 const { protect, allowedTo } = require("../middlewares/auth.middleware");
+const validate = require("../middlewares/validate.middleware");
+const checkBan = require("../middlewares/checkBan.middleware");
+
+// Validators
+const { changeStatusSchema } = require("../validators/order.validator");
 
 // -------------------------------------IMPORTS-------------------------------------
 
 const orderRouter = express.Router();
 
 // Middlewares
-orderRouter.use(protect);
+orderRouter.use(protect, checkBan);
 
 // Route to get all user orders
 orderRouter.get("/", getUserOrders);
@@ -21,6 +26,6 @@ orderRouter.get("/", getUserOrders);
 orderRouter.delete("/:orderId", deleteOrder);
 
 // Route to edit order by id
-orderRouter.patch("/:orderId", allowedTo("admin"), changeStatus);
+orderRouter.patch("/:orderId", allowedTo("admin"), validate(changeStatusSchema), changeStatus);
 
 module.exports = orderRouter;

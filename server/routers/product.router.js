@@ -8,6 +8,11 @@ const { getProducts, getProduct, getProductsByCategory, createProduct, editProdu
 const { protect, allowedTo } = require('../middlewares/auth.middleware');
 const upload = require('../middlewares/upload.middleware');
 const parseFields = require('../middlewares/parseFields.middleware');
+const validate = require('../middlewares/validate.middleware');
+const checkBan = require('../middlewares/checkBan.middleware');
+
+// Validators
+const { createProductSchema, editProductSchema } = require('../validators/product.validator');
 
 // -------------------------------------IMPORTS-------------------------------------
 
@@ -26,18 +31,20 @@ productRouter.get("/:productId", getProduct);
 productRouter.delete(
     "/deleteproduct/:productId",
     protect,
+    checkBan,
     allowedTo("seller", "moderator", "admin"),
     deleteProduct
 );
 
 // Middlewares
-productRouter.use(protect, allowedTo("seller", "admin"));
+productRouter.use(protect, checkBan, allowedTo("seller", "admin"));
 
 // Route to create new product
 productRouter.post(
     "/createproduct/:categoryId",
     upload.array("images", 5),
     parseFields,
+    validate(createProductSchema),
     createProduct
 );
 // Route to edit product information by id
@@ -45,6 +52,7 @@ productRouter.patch(
     "/editproduct/:productId",
     upload.array("images", 5),
     parseFields,
+    validate(editProductSchema),
     editProduct
 );
 

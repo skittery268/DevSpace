@@ -10,8 +10,8 @@ const catchAsync = require("../utils/catchAsync.util");
 // Controller to get all users
 // GET /api/v1/users
 const getUsers = catchAsync(async (req, res, next) => {
-    const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 12;
+    const page = Math.max(1, Number(req.query.page)) || 1;
+    const limit = Math.min(Number(req.query.limit), 100) || 12;
 
     const users = await User.find({ isDeleted: { $ne: true } })
         .sort({ createdAt: -1 })
@@ -19,7 +19,7 @@ const getUsers = catchAsync(async (req, res, next) => {
         .limit(limit)
         .lean();
 
-    const userCount = await User.countDocuments();
+    const userCount = await User.countDocuments({ isDeleted: { $ne: true } });
 
     res.status(200).json({
         status: "success",
@@ -51,10 +51,11 @@ const deleteUser = catchAsync(async (req, res, next) => {
     };
 
     if (req.user._id.toString() !== id.toString() && req.user.role !== "admin") {
-        return next(new AppError("You cant delete this account!", 401));
+        return next(new AppError("You cant delete this account!", 403));
     };
 
     user.isDeleted = true;
+    user.email = `deleted_${user._id}_${Date.now()}@deleted.local`;
     user.deletedAt = Date.now();
 
     await user.save();

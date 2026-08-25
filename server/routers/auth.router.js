@@ -7,15 +7,20 @@ const { register, login, logout, getMe, googleCallback, verifyEmail, forgotPassw
 
 // Middlewares
 const { protect } = require("../middlewares/auth.middleware");
+const validate = require("../middlewares/validate.middleware");
+const checkBan = require("../middlewares/checkBan.middleware");
+
+// Validators
+const { registerSchema, loginSchema, forgotPasswordSchema, resetPasswordSchema, setup2FASchema, verify2FASchema, disable2FASchema } = require("../validators/auth.validator");
 
 // -------------------------------------IMPORTS-------------------------------------
 
 const authRouter = express.Router();
 
 // Route to register new user (/api/v1/auth/register)
-authRouter.post("/register", register);
+authRouter.post("/register", validate(registerSchema), register);
 // Route to login user (/api/v1/auth/login)
-authRouter.post("/login", login);
+authRouter.post("/login", validate(loginSchema), login);
 // Route to logout user (/api/v1/auth/logout)
 authRouter.delete("/logout", logout);
 // Route to auto login (/api/v1/auth/me)
@@ -30,17 +35,17 @@ authRouter.get("/google/callback", passport.authenticate("google", { session: fa
 authRouter.get("/verify-email", verifyEmail);
 
 // Route to send reset password code in user email
-authRouter.post("/forgot-password", forgotPassword);
+authRouter.post("/forgot-password", validate(forgotPasswordSchema), forgotPassword);
 // Route to reset and change user password
-authRouter.post("/reset-password", resetPassword);
+authRouter.post("/reset-password", validate(resetPasswordSchema), resetPassword);
 
 // Route to start activate 2FA authentication in account
-authRouter.post("/2fa/setup", protect, setup2FA);
+authRouter.post("/2fa/setup", protect, checkBan, validate(setup2FASchema), setup2FA);
 // Route to verify activate 2FA authentication in account
-authRouter.post("/2fa/verify-setup", protect, verify2FASetup);
+authRouter.post("/2fa/verify-setup", protect, checkBan, validate(verify2FASchema), verify2FASetup);
 // Route to login with 2FA
-authRouter.post("/2fa/verify-login", verify2FALogin);
+authRouter.post("/2fa/verify-login", validate(verify2FASchema), verify2FALogin);
 // Route to disable 2FA authentication
-authRouter.post("/2fa/disable", protect, disable2FA);
+authRouter.post("/2fa/disable", protect, checkBan, validate(disable2FASchema), disable2FA);
 
 module.exports = authRouter;

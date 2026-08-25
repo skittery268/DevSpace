@@ -4,7 +4,6 @@ const Payment = require('../models/payment.model');
 const Product = require('../models/product.model');
 
 // Modules
-const mongoose = require('mongoose');
 const stripe = require('stripe')(process.env.SECRET_STRIPE_KEY);
 
 // Utils
@@ -18,10 +17,6 @@ const catchAsync = require('../utils/catchAsync.util');
 const createCheckoutSession = catchAsync(async (req, res, next) => {
     const { userOrder, userInfo } = req.body;
 
-    if (!Array.isArray(userOrder) || userOrder.length === 0) {
-        return next(new AppError("Order is empty!", 400));
-    };
-
     if (!userInfo) {
         return next(new AppError("User information is required!", 400));
     };
@@ -30,14 +25,6 @@ const createCheckoutSession = catchAsync(async (req, res, next) => {
     const obj = {};
 
     for (const item of userOrder) {
-        if (!mongoose.isValidObjectId(item.id)) {
-            return next(new AppError("Incorrect product id!", 400));
-        };
-
-        if (!Number.isInteger(item.quantity) || item.quantity <= 0) {
-            return next(new AppError("Incorrect quantity!", 400));
-        };
-
         if (obj[item.id]) {
             return next(new AppError("Order contains the same product twice!", 400));
         };
@@ -141,7 +128,7 @@ const stripeWebhook = catchAsync(async (req, res, next) => {
     let event;
 
     try {
-        event = stripe.webhooks.constructEvent( req.body, signature, process.env.STRIPE_WEBHOOK_SECRET );
+        event = stripe.webhooks.constructEvent(req.body, signature, process.env.STRIPE_WEBHOOK_SECRET);
     } catch (err) {
         return next(new AppError(`Webhook error: ${err.message}`, 400));
     }
@@ -208,7 +195,7 @@ const stripeWebhook = catchAsync(async (req, res, next) => {
         };
 
         return res.status(200).json({ received: true });
-    }
+    };
 
     if (event.type === "payment_intent.payment_failed") {
         const paymentIntent = event.data.object;
@@ -232,7 +219,21 @@ const stripeWebhook = catchAsync(async (req, res, next) => {
         payment.webhookProcessed = true;
 
         await payment.save();
-    }
+    };
+
+    if (event.type === "checkout.session.expired") {
+        const session = event.data.object;
+
+        await Payment.findOneAndUpdate({
+            stripeSessionId: session.id,
+            status: "pending"
+        }, {
+            $set: {
+                status: "canceled",
+                webhookProcessed: true
+            }
+        });
+    };
 
     res.status(200).json({ received: true });
 });

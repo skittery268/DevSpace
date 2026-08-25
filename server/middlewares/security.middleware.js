@@ -7,7 +7,17 @@ const expressMongoSanitize = (req, res, next) => {
 
     if (req.params) mongoSanitize.sanitize(req.params, options);
     
-    if (req.query) mongoSanitize.sanitize(req.query, options);
+    if (req.query) {
+        const sanitized = { ...req.query };
+
+        mongoSanitize.sanitize(req.query, options);
+
+        Object.defineProperty(req, "query", {
+            value: sanitized,
+            writable: true,
+            configurable: true
+        });
+    };
 
     next();
 };

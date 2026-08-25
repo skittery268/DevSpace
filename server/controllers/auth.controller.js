@@ -45,10 +45,6 @@ const createSendToken = (res, user) => {
 // POST /api/v1/auth/register
 const register = catchAsync(async (req, res, next) => {
     const { fullname, email, password } = req.body;
-    
-    if (!fullname || !email || !password) {
-        return next(new AppError("All fields is required!", 400));
-    };
 
     const exist = await User.findOne({ email });
 
@@ -71,7 +67,7 @@ const register = catchAsync(async (req, res, next) => {
 const login = catchAsync(async (req, res, next) => {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email }).select("+password");
+    const user = await User.findOne({ email }).select("+password").populate("moderation.activeBan");
 
     if (!user) {
         return next(new AppError("Credentials incorrect!", 401));
@@ -89,6 +85,18 @@ const login = catchAsync(async (req, res, next) => {
 
     if (user.isDeleted) {
         return next(new AppError("This account deleted!", 400));
+    };
+
+    const userActiveBan = user.moderation.activeBan;
+
+    if (userActiveBan) {
+        if (userActiveBan.expiresAt === null || userActiveBan.expiresAt > Date.now()) {
+            return next(new AppError("Your account is banned!", 403));
+        };
+
+        user.moderation.activeBan = null;
+
+        await user.save();
     };
 
     if (user.twoFactorEnabled) {
@@ -140,12 +148,26 @@ const getMe = catchAsync(async (req, res, next) => {
 // Controller to handle google authenticate
 // GET /api/v1/auth/google/callback
 const googleCallback = catchAsync(async (req, res, next) => {
-    if (req.user.isDeleted) {
+    const { user } = req;
+
+    if (user.isDeleted) {
         return next(new AppError("This account is deleted!", 400));
     };
-    
-    if (req.user.twoFactorEnabled) {
-        const token = jwt.sign({ id: req.user._id, scope: "2fa" }, process.env.JWT_SECRET, { expiresIn: process.env.TWO_FA_JWT_EXPIRES });
+
+    const userActiveBan = user.moderation.activeBan;
+
+    if (userActiveBan) {
+        if (userActiveBan.expiresAt === null || userActiveBan.expiresAt > Date.now()) {
+            return next(new AppError("Your account is banned!", 403));
+        };
+
+        user.moderation.activeBan = null;
+
+        await user.save();
+    };
+
+    if (user.twoFactorEnabled) {
+        const token = jwt.sign({ id: user._id, scope: "2fa" }, process.env.JWT_SECRET, { expiresIn: process.env.TWO_FA_JWT_EXPIRES });
 
         res.cookie("twoFA", token, {
             maxAge: process.env.TWO_FA_COOKIE_EXPIRES * 60 * 1000,
@@ -157,7 +179,7 @@ const googleCallback = catchAsync(async (req, res, next) => {
         return res.redirect(`${process.env.CLIENT_URL}?requires2FA=true`);
     };
 
-    const token = signToken(req.user);
+    const token = signToken(user);
 
     res.cookie("at", token, {
         maxAge: process.env.COOKIE_EXPIRES * 24 * 60 * 60 * 1000,
@@ -166,7 +188,7 @@ const googleCallback = catchAsync(async (req, res, next) => {
         sameSite: process.env.NODE_MODE === "dev" ? "lax" : "lax"
     });
 
-    req.user.password = undefined;
+    user.password = undefined;
 
     res.redirect(process.env.CLIENT_URL);
 });
@@ -180,10 +202,12 @@ const verifyEmail = catchAsync(async (req, res, next) => {
         return next(new AppError("Token is required!", 400));
     };
 
-    const payload = await jwt.verify(token, process.env.JWT_SECRET);
+    let payload = null;
 
-    if (!payload) {
-        return next(new AppError("Token invalid or expired!", 400));
+    try {
+        payload = await jwt.verify(token, process.env.JWT_SECRET);
+    } catch (err) {
+        return next(new AppError("Invalid or expired token!", 401));
     };
 
     const user = await User.findById(payload.id);
@@ -208,10 +232,6 @@ const verifyEmail = catchAsync(async (req, res, next) => {
 const forgotPassword = catchAsync(async (req, res, next) => {
     const { email } = req.body;
 
-    if (!email) {
-        return next(new AppError("Email is required!", 400));
-    };
-
     const user = await User.findOne({ email });
 
     if (!user) {
@@ -234,10 +254,6 @@ const forgotPassword = catchAsync(async (req, res, next) => {
 const resetPassword = catchAsync(async (req, res, next) => {
     const { email, code, newPassword } = req.body;
 
-    if (!email || !code || !newPassword) {
-        return next(new AppError("All fields is required!", 400));
-    };
-
     const hashedCode = crypto
         .createHash("sha256")
         .update(String(code))
@@ -246,7 +262,7 @@ const resetPassword = catchAsync(async (req, res, next) => {
     const user = await User.findOne({ email, resetPasswordExpires: { $gt: Date.now() } }).select("+resetPasswordAttempts +passwordResetCode +resetPasswordExpires");
 
     if (!user) {
-        return next(new AppError("Credentials Incorrect!", 404));
+        return next(new AppError("Credentials Incorrect!", 400));
     };
 
     if (user.resetPasswordAttempts >= 5) {
@@ -283,10 +299,6 @@ const resetPassword = catchAsync(async (req, res, next) => {
 // POST /api/v1/auth/2fa/setup
 const setup2FA = catchAsync(async (req, res, next) => {
     const { password } = req.body;
-
-    if (!password) {
-        return next(new AppError("Password is required!", 400));
-    };
 
     const user = await User.findById(req.user._id).select("+password");
 
@@ -372,14 +384,16 @@ const verify2FALogin = catchAsync(async (req, res, next) => {
         return next(new AppError("Token is required!", 400));
     };
 
-    const payload = await jwt.verify(twoFA, process.env.JWT_SECRET);
+    let payload = null;
 
-    if (!payload) {
-        return next(new AppError("JWT invalid or expires!", 400));
+    try {
+        payload = await jwt.verify(twoFA, process.env.JWT_SECRET);
+    } catch (err) {
+        return next(new AppError("Invalid or expired token!", 401));
     };
 
     if (payload.scope !== "2fa") {
-        return next(new AppError("Invalid token!", 400));
+        return next(new AppError("Invalid token!", 401));
     };
 
     const user = await User.findById(payload.id).select("+twoFactorSecret");
@@ -418,10 +432,6 @@ const verify2FALogin = catchAsync(async (req, res, next) => {
 // POST /api/v1/auth/2fa/disable
 const disable2FA = catchAsync(async (req, res, next) => {
     const { password } = req.body;
-
-    if (!password) {
-        return next(new AppError("Password is required!", 400));
-    };
 
     const user = await User.findById(req.user._id).select("+password +twoFactorSecret");
 

@@ -8,14 +8,15 @@ const uploadToCloudinary = require("../utils/uploadToCloudinary");
 
 // Configs
 const cloudinary = require("../configs/cloudinary.config");
+const Product = require("../models/product.model");
 
 // -------------------------------------IMPORTS-------------------------------------
 
 // Controller to get categories
 // GET /api/v1/category
 const getCategories = catchAsync(async (req, res, next) => {
-    const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 12;
+    const page = Math.max(1, Number(req.query.page)) || 1;
+    const limit = Math.min(Number(req.query.limit), 100) || 12;
 
     const categories = await Category.find()
         .sort({ createdAt: -1 })
@@ -77,9 +78,16 @@ const deleteCategory = catchAsync(async (req, res, next) => {
         return next(new AppError("Category not found!", 404));
     };
 
+    const hasChildren = await Category.exists({ parentCategory: category._id });
+    const hasProducts = await Product.exists({ "universal.category": category._id });
+
+    if (hasChildren || hasProducts) {
+        return next(new AppError("You cant delete this category because he has children categories or products!", 409));
+    };
+
     if (category.image.url) {
         await cloudinary.uploader.destroy(category.image.public_id);
-    }
+    };
 
     await Category.findByIdAndDelete(id);
 

@@ -6,6 +6,11 @@ const { getProductReviews, createReview, deleteReview, editReview } = require(".
 
 // Middlewares
 const { protect } = require("../middlewares/auth.middleware");
+const validate = require("../middlewares/validate.middleware");
+const checkBan = require("../middlewares/checkBan.middleware");
+
+// Validators
+const { createReviewSchema, editReviewSchema } = require("../validators/review.validator");
 
 // -------------------------------------IMPORTS-------------------------------------
 
@@ -15,11 +20,12 @@ const reviewRouter = express.Router();
 reviewRouter.get("/:productId", getProductReviews);
 
 // Middlewares
-reviewRouter.use(protect);
+reviewRouter.use(protect, checkBan);
 
 // Route to create new review 
 reviewRouter.post(
     "/:productId",
+    validate(createReviewSchema),
     createReview
 );
 // Route to delete review by id
@@ -30,6 +36,7 @@ reviewRouter.delete(
 // Route to edit review information by id
 reviewRouter.patch(
     "/:reviewId",
+    validate(editReviewSchema),
     editReview
 );
 

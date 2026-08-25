@@ -7,7 +7,6 @@ const crypto = require("crypto");
 
 // -------------------------------------IMPORTS-------------------------------------
 
-
 // Schema for user model
 const userSchema = new mongoose.Schema({
     fullname: {
@@ -74,6 +73,13 @@ const userSchema = new mongoose.Schema({
     },
     deletedAt: {
         type: Date
+    },
+    moderation: {
+        activeBan: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "AdminAction",
+            default: null,
+        }
     }
 }, { timestamps: true });
 

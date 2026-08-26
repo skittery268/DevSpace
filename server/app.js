@@ -11,7 +11,6 @@ const passport = require("passport");
 
 // Security modules
 const helmet = require("helmet");
-const hpp = require("hpp");
 const cors = require("cors");
 
 // Configs
@@ -55,7 +54,6 @@ app.use(cors({
     credentials: true
 }));
 app.use(helmet());
-app.use(hpp());
 app.use(expressMongoSanitize);
 
 // Test route to check running server or not

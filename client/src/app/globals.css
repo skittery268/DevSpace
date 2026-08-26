@@ -1,0 +1,558 @@
+@import "tailwindcss";
+
+/*
+  DevSpace design system.
+
+  One token layer feeds every screen. The rules are:
+
+    - `ink-*` is the neutral ramp, expressed as *distance from the page*:
+      50 sits against the background, 900 is the strongest text. Dark mode
+      redefines the ramp instead of the components, so `text-ink-900` stays
+      "the strongest text" in both themes and no component needs a `dark:`
+      variant for ordinary neutrals. The ramp carries a faint green cast so it
+      sits under emerald without the two reading as separate palettes.
+    - `brand-*` keeps its hue in both themes, because `bg-brand-600` always
+      carries white text. Anything that needs to *read* as brand-colored text
+      uses `text-link` instead, which does flip.
+    - Everything a component paints on — surfaces, lines, status tones — is a
+      semantic token, never a raw palette entry.
+
+  Emerald is the accent, not the wallpaper: it lands on actions, active states
+  and one gradient. The neutrals do the rest of the work.
+
+  Dark mode is a `.dark` class on <html>, set before first paint by the inline
+  script in layout.tsx, so there is no flash and no media query to keep in sync.
+*/
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+    /* ---------------------------------------------------------------- neutrals */
+    /* Green-cast greys. Warm enough to read as paper, cool enough for emerald. */
+    --color-ink-50: #f5f8f6;
+    --color-ink-100: #edf2ef;
+    --color-ink-200: #e0e7e3;
+    --color-ink-300: #c7d2cb;
+    --color-ink-400: #94a29a;
+    --color-ink-500: #68766e;
+    --color-ink-600: #4c5a53;
+    --color-ink-700: #35403a;
+    --color-ink-800: #1d2723;
+    --color-ink-900: #0a1210;
+
+    /* ------------------------------------------------------------------ brand */
+    /* Emerald, deepened through the middle so 600 carries white text cleanly. */
+    --color-brand-50: #eefbf4;
+    --color-brand-100: #d4f5e5;
+    --color-brand-200: #abeacd;
+    --color-brand-300: #73d9ae;
+    --color-brand-400: #38c08c;
+    --color-brand-500: #14a06f;
+    --color-brand-600: #0a8259;
+    --color-brand-700: #096848;
+    --color-brand-800: #0a533a;
+    --color-brand-900: #08402f;
+
+    /* Second gradient stop — teal, the cool end of the same family.
+       Never used on its own for text. */
+    --color-accent-400: #2dd4bf;
+    --color-accent-500: #10b3a3;
+    --color-accent-600: #0d9488;
+
+    /* --------------------------------------------------------------- surfaces */
+    /* Cards, header, footer — the plane content sits on. */
+    --color-surface: #ffffff;
+    /* Menus, modals, toasts — the plane that floats above `surface`. */
+    --color-surface-2: #ffffff;
+    /* Wells: inset panels, table headers, muted rows. */
+    --color-surface-3: #f5f8f6;
+
+    /* ------------------------------------------------------------ interactive */
+    --color-link: #096848;
+    --color-link-strong: #0a533a;
+    --color-brand-soft: #eefbf4;
+    --color-brand-soft-hover: #d4f5e5;
+    --color-brand-line: #abeacd;
+    --color-ring: #14a06f;
+
+    /*
+      Scrims and backdrops. Deliberately outside the neutral ramp: `ink-900`
+      inverts to near-white in dark mode, which would turn every image overlay
+      and modal backdrop into a white sheet.
+    */
+    --color-scrim: #04100c;
+
+    /* ------------------------------------------------------------ status tones */
+    /*
+      `success` is a green too, so it is pushed a few degrees yellower than the
+      emerald brand: side by side, a "delivered" badge and a brand chip stay
+      distinguishable instead of reading as the same token twice.
+    */
+    --color-success: #16a34a;
+    --color-success-strong: #15803d;
+    --color-success-soft: #f1fdf4;
+    --color-success-line: #bbf7d0;
+
+    --color-warning: #d97706;
+    --color-warning-strong: #92400e;
+    --color-warning-soft: #fffbeb;
+    --color-warning-line: #fde68a;
+
+    --color-danger: #dc2626;
+    --color-danger-strong: #991b1b;
+    --color-danger-soft: #fef2f2;
+    --color-danger-line: #fecaca;
+    /* Solid destructive button. Stays dark enough for white text in both themes. */
+    --color-danger-solid: #dc2626;
+    --color-danger-solid-hover: #b91c1c;
+
+    --color-info: #0284c7;
+    --color-info-strong: #075985;
+    --color-info-soft: #f0f9ff;
+    --color-info-line: #bae6fd;
+
+    --color-star: #f59e0b;
+
+    /* ------------------------------------------------------------- typography */
+    --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+    --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+    /*
+      Display sizes for hero and section headings. Tighter tracking than the
+      Tailwind defaults at these sizes — large type set at body tracking is the
+      single clearest tell of a template.
+    */
+    --text-display: 3.25rem;
+    --text-display--line-height: 1.04;
+    --text-display--letter-spacing: -0.035em;
+    --text-display--font-weight: 600;
+
+    --text-display-lg: 4.25rem;
+    --text-display-lg--line-height: 1;
+    --text-display-lg--letter-spacing: -0.04em;
+    --text-display-lg--font-weight: 600;
+
+    /* --------------------------------------------------------------- easing */
+    --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+/*
+  Dark theme.
+
+  Only token values change. `:root.dark` outranks the `:root` block Tailwind
+  emits for `@theme`, and every utility reads `var(--color-…)` at runtime, so
+  the whole app re-skins from here.
+*/
+:root.dark {
+    --color-ink-50: #070c0a;
+    --color-ink-100: #101614;
+    --color-ink-200: #1c2622;
+    --color-ink-300: #2b3833;
+    --color-ink-400: #64746c;
+    --color-ink-500: #8b9a93;
+    --color-ink-600: #adbab4;
+    --color-ink-700: #c8d3ce;
+    --color-ink-800: #e1e8e5;
+    --color-ink-900: #f3f8f5;
+
+    --color-brand-50: #082018;
+    --color-brand-100: #0b2b20;
+    --color-brand-200: #0f3d2d;
+    --color-brand-300: #176247;
+    --color-brand-400: #4bd39c;
+    --color-brand-500: #34c48c;
+    --color-brand-600: #14a06f;
+    --color-brand-700: #0a8259;
+    --color-brand-800: #096848;
+    --color-brand-900: #0a533a;
+
+    --color-accent-400: #46e0cd;
+    --color-accent-500: #2dd4bf;
+    --color-accent-600: #14b8a6;
+
+    --color-surface: #0d1411;
+    --color-surface-2: #131b18;
+    --color-surface-3: #101614;
+
+    --color-link: #4bd39c;
+    --color-link-strong: #7ee6bc;
+    --color-brand-soft: #0d2a20;
+    --color-brand-soft-hover: #123a2c;
+    --color-brand-line: #1c5340;
+    --color-ring: #34c48c;
+
+    --color-success: #4ade80;
+    --color-success-strong: #bbf7d0;
+    --color-success-soft: #0c2617;
+    --color-success-line: #16512f;
+
+    --color-warning: #fbbf24;
+    --color-warning-strong: #fde68a;
+    --color-warning-soft: #2a2011;
+    --color-warning-line: #55401a;
+
+    --color-danger: #f87171;
+    --color-danger-strong: #fecaca;
+    --color-danger-soft: #2c1416;
+    --color-danger-line: #5b2225;
+    --color-danger-solid: #dc2626;
+    --color-danger-solid-hover: #ef4444;
+
+    --color-info: #38bdf8;
+    --color-info-strong: #bae6fd;
+    --color-info-soft: #0b2434;
+    --color-info-line: #14455f;
+
+    --color-star: #fbbf24;
+
+    /*
+      Elevation on a dark plane comes from contrast, not from a black blur:
+      the shadows stay only to anchor floating panels against the backdrop.
+    */
+    --elev-1: 0 1px 2px 0 rgb(0 0 0 / 0.5);
+    --elev-2: 0 2px 6px -2px rgb(0 0 0 / 0.55), 0 8px 20px -6px rgb(0 0 0 / 0.5);
+    --elev-3: 0 8px 18px -8px rgb(0 0 0 / 0.6), 0 24px 56px -12px rgb(0 0 0 / 0.7);
+    --elev-brand: 0 6px 20px -6px rgb(20 160 111 / 0.5);
+
+    color-scheme: dark;
+}
+
+:root {
+    color-scheme: light;
+
+    /*
+      Elevation. Tailwind inlines `--shadow-*` theme keys at build time, so a
+      per-theme shadow has to travel through custom properties of its own —
+      hence `elev-1…3` rather than `shadow-sm…lg`.
+
+      The blur is tinted with the neutral's own hue rather than pure black, which
+      is what keeps a stack of cards from looking sooty.
+    */
+    --elev-1: 0 1px 2px 0 rgb(10 18 16 / 0.04), 0 1px 3px 0 rgb(10 18 16 / 0.05);
+    --elev-2: 0 2px 4px -2px rgb(10 18 16 / 0.05), 0 8px 20px -6px rgb(10 18 16 / 0.08);
+    --elev-3: 0 8px 16px -8px rgb(10 18 16 / 0.08), 0 24px 48px -12px rgb(10 18 16 / 0.14);
+    --elev-brand: 0 6px 18px -6px rgb(10 130 89 / 0.35);
+}
+
+html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+}
+
+body {
+    background-color: var(--color-ink-50);
+    color: var(--color-ink-900);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    /* Token swaps would otherwise repaint the whole page instantly on toggle. */
+    transition:
+        background-color 0.25s var(--ease-out-soft),
+        color 0.25s var(--ease-out-soft);
+}
+
+/* Focus ring: one definition, so every interactive element matches. */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+    border-radius: 0.375rem;
+}
+
+/* Number inputs: the spinners fight with the quantity steppers. */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    appearance: none;
+    margin: 0;
+}
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+::selection {
+    background-color: var(--color-brand-soft-hover);
+    color: var(--color-link-strong);
+}
+
+/* ---------------------------------------------------------------- utilities */
+
+@utility elev-1 {
+    box-shadow: var(--elev-1);
+}
+
+@utility elev-2 {
+    box-shadow: var(--elev-2);
+}
+
+@utility elev-3 {
+    box-shadow: var(--elev-3);
+}
+
+@utility elev-brand {
+    box-shadow: var(--elev-brand);
+}
+
+@utility scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-ink-300) transparent;
+}
+
+/** Frosted panel: header, drawers, floating bars. */
+@utility glass {
+    background-color: color-mix(in oklab, var(--color-surface) 80%, transparent);
+    backdrop-filter: blur(16px) saturate(160%);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+}
+
+/** The one brand gradient. Reserved for hero type and a handful of accents. */
+@utility bg-brand-gradient {
+    background-image: linear-gradient(
+        115deg,
+        var(--color-brand-700) 0%,
+        var(--color-brand-500) 52%,
+        var(--color-accent-500) 100%
+    );
+}
+
+@utility text-brand-gradient {
+    background-image: linear-gradient(
+        115deg,
+        var(--color-brand-600) 0%,
+        var(--color-brand-500) 45%,
+        var(--color-accent-600) 100%
+    );
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+/**
+ * Solid brand fill for primary actions.
+ *
+ * A gradient on every button is what makes an interface look generated; the
+ * depth here comes from a hairline highlight along the top edge instead, which
+ * is the same trick a physical key uses.
+ */
+@utility brand-fill {
+    background-color: var(--color-brand-600);
+    color: #fff;
+    box-shadow:
+        inset 0 1px 0 0 rgb(255 255 255 / 0.16),
+        var(--elev-brand);
+}
+
+/**
+ * Faint ruled grid, for hero and CTA panels.
+ * Fades out toward the edges so it never meets a border as a hard crop.
+ */
+@utility bg-grid {
+    background-image:
+        linear-gradient(
+            to right,
+            color-mix(in oklab, var(--color-ink-300) 42%, transparent) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            to bottom,
+            color-mix(in oklab, var(--color-ink-300) 42%, transparent) 1px,
+            transparent 1px
+        );
+    background-size: 68px 68px;
+    mask-image: radial-gradient(ellipse 80% 65% at 50% 40%, #000 30%, transparent 78%);
+    -webkit-mask-image: radial-gradient(
+        ellipse 80% 65% at 50% 40%,
+        #000 30%,
+        transparent 78%
+    );
+}
+
+/** Hairline that fades at both ends — section seams, panel dividers. */
+@utility rule-fade {
+    background-image: linear-gradient(
+        to right,
+        transparent,
+        var(--color-ink-200) 18%,
+        var(--color-ink-200) 82%,
+        transparent
+    );
+}
+
+/* ---------------------------------------------------------------- keyframes */
+
+@keyframes devspace-rise {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes devspace-fade {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes devspace-scale-in {
+    from {
+        opacity: 0;
+        transform: scale(0.96) translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes devspace-slide-down {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes devspace-slide-in-left {
+    from {
+        opacity: 0;
+        transform: translateX(-16px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes devspace-pop {
+    0% {
+        transform: scale(1);
+    }
+    45% {
+        transform: scale(1.32);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes devspace-shimmer {
+    from {
+        background-position: 200% 0;
+    }
+    to {
+        background-position: -200% 0;
+    }
+}
+
+@keyframes devspace-float {
+    0%,
+    100% {
+        transform: translate3d(0, 0, 0);
+    }
+    50% {
+        transform: translate3d(0, -14px, 0);
+    }
+}
+
+/** Bars on the admin dashboard grow from zero on first paint. */
+@keyframes devspace-grow-x {
+    from {
+        transform: scaleX(0);
+    }
+    to {
+        transform: scaleX(1);
+    }
+}
+
+@utility animate-rise {
+    animation: devspace-rise 0.26s var(--ease-out-soft) both;
+}
+
+@utility animate-fade {
+    animation: devspace-fade 0.24s var(--ease-out-soft) both;
+}
+
+@utility animate-scale-in {
+    animation: devspace-scale-in 0.2s var(--ease-out-soft) both;
+}
+
+@utility animate-slide-down {
+    animation: devspace-slide-down 0.22s var(--ease-out-soft) both;
+}
+
+@utility animate-slide-in-left {
+    animation: devspace-slide-in-left 0.28s var(--ease-out-soft) both;
+}
+
+@utility animate-pop {
+    animation: devspace-pop 0.36s var(--ease-spring);
+}
+
+@utility animate-float {
+    animation: devspace-float 9s ease-in-out infinite;
+}
+
+@utility animate-grow-x {
+    transform-origin: left;
+    animation: devspace-grow-x 0.7s var(--ease-out-soft) both;
+}
+
+/** Skeletons sweep instead of pulsing — it reads as "loading", not "disabled". */
+@utility skeleton-sheen {
+    background-image: linear-gradient(
+        90deg,
+        var(--color-ink-200) 0%,
+        var(--color-ink-100) 45%,
+        var(--color-ink-200) 90%
+    );
+    background-size: 200% 100%;
+    animation: devspace-shimmer 1.6s linear infinite;
+}
+
+/**
+ * Scroll reveal, driven by `components/ui/Reveal.tsx`.
+ * The element is only hidden once the observer has claimed it, so content is
+ * always visible when JavaScript never runs.
+ */
+[data-reveal="pending"] {
+    opacity: 0;
+    transform: translateY(14px);
+}
+
+[data-reveal="shown"] {
+    opacity: 1;
+    transform: none;
+    transition:
+        opacity 0.55s var(--ease-out-soft),
+        transform 0.55s var(--ease-out-soft);
+    transition-delay: var(--reveal-delay, 0ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+
+    [data-reveal="pending"] {
+        opacity: 1;
+        transform: none;
+    }
+}

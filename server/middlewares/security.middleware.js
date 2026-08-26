@@ -10,7 +10,7 @@ const expressMongoSanitize = (req, res, next) => {
     if (req.query) {
         const sanitized = { ...req.query };
 
-        mongoSanitize.sanitize(req.query, options);
+        mongoSanitize.sanitize(sanitized, options);
 
         Object.defineProperty(req, "query", {
             value: sanitized,

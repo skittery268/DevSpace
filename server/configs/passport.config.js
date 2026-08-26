@@ -36,7 +36,6 @@ passport.use(
                         await user.populate("moderation.activeBan");
                     } else {
                         user.googleId = profile.id;
-                        user.provider = "google";
 
                         await user.save();
                     };

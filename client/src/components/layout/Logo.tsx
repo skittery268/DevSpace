@@ -13,12 +13,15 @@ import { cn } from "@/lib/utils";
  * shell prompt — caret and cursor — which is the one glyph every developer
  * reads instantly, and it survives being shrunk to a favicon.
  */
-function Mark({ className }: { className?: string }) {
+function Mark({ className, tone }: { className?: string; tone: LogoTone }) {
     return (
         <span
             aria-hidden
             className={cn(
-                "relative flex shrink-0 items-center justify-center rounded-lg bg-brand-600 text-white elev-brand",
+                "relative flex shrink-0 items-center justify-center rounded-lg text-white",
+                tone === "inverse"
+                    ? "bg-white/12 ring-1 ring-inset ring-white/25"
+                    : "bg-brand-600 elev-brand",
                 className,
             )}
         >
@@ -45,24 +48,34 @@ function Mark({ className }: { className?: string }) {
     );
 }
 
+/**
+ * `inverse` is for the one place the wordmark sits on a dark brand plane — the
+ * auth split screen. It is a tone, not a second logo: the mark and the spacing
+ * are the same, only the material changes.
+ */
+export type LogoTone = "default" | "inverse";
+
 export function Logo({
     className,
     size = "md",
     href = "/",
+    tone = "default",
 }: {
     className?: string;
     size?: "sm" | "md" | "lg";
     href?: string | null;
+    tone?: LogoTone;
 }) {
     const mark = size === "lg" ? "size-10" : size === "sm" ? "size-7" : "size-8.5";
     const text = size === "lg" ? "text-xl" : size === "sm" ? "text-[0.9375rem]" : "text-[1.0625rem]";
 
     const content = (
         <>
-            <Mark className={mark} />
+            <Mark className={mark} tone={tone} />
             <span
                 className={cn(
-                    "font-semibold tracking-[-0.02em] text-ink-900",
+                    "font-semibold tracking-[-0.02em]",
+                    tone === "inverse" ? "text-white" : "text-ink-900",
                     text,
                 )}
             >

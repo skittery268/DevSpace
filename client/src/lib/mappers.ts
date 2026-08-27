@@ -2,6 +2,7 @@ import type { ApiCategory, Category } from "@/types/category.types";
 import type { ApiOrder, Order } from "@/types/order.types";
 import type { ApiProduct, Product, ProductSeller } from "@/types/product.types";
 import type { ApiReview, Review } from "@/types/review.types";
+import type { ApiSellerOrder, SellerOrder } from "@/types/seller.types";
 import type { ApiUser } from "@/types/user.types";
 
 /**
@@ -58,6 +59,11 @@ export function mapProduct(input: ApiProduct): Product {
         category: isPopulated<ApiCategory>(universal.category)
             ? mapCategory(universal.category)
             : null,
+        categoryId: isPopulated<ApiCategory>(universal.category)
+            ? universal.category._id
+            : typeof universal.category === "string"
+                ? universal.category
+                : null,
         seller: mapSeller(universal.sellerId),
         reviewsCount: universal.reviewsCount ?? 0,
         // `attributes` is `Mixed`, so a legacy document can hold a non-object value.
@@ -105,6 +111,33 @@ export function mapOrder(input: ApiOrder): Order {
         totalAmount: input.totalAmount,
         status: input.status,
         paymentId: input.paymentId,
+        createdAt: input.createdAt,
+        updatedAt: input.updatedAt,
+    };
+}
+
+/**
+ * `GET /seller/orders` — the aggregate hands back only the caller's own lines,
+ * so the seller's share is summed here rather than read off `totalAmount`,
+ * which still covers every seller in the order.
+ */
+export function mapSellerOrder(input: ApiSellerOrder): SellerOrder {
+    const items = (input.products ?? []).map((item) => ({
+        productId: item.productId,
+        sellerId: item.sellerId,
+        quantity: item.quantity,
+        itemTotal: item.itemTotal,
+    }));
+
+    return {
+        id: input._id,
+        buyerId: input.userId,
+        shipping: input.userInfo,
+        items,
+        orderTotal: input.totalAmount,
+        sellerSubtotal: items.reduce((sum, item) => sum + item.itemTotal, 0),
+        units: items.reduce((sum, item) => sum + item.quantity, 0),
+        status: input.status,
         createdAt: input.createdAt,
         updatedAt: input.updatedAt,
     };

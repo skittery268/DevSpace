@@ -54,8 +54,18 @@ export function ProductFormDialog({
     const createProduct = useCreateProduct();
     const updateProduct = useUpdateProduct();
 
+    /**
+     * `categoryId` falls back to the raw id, not just the populated object.
+     *
+     * This is a one-shot initializer, and not every source of a `Product` has a
+     * populated category — `GET /seller/products` reads with `.lean()` and no
+     * populate, so a row from the seller dashboard can arrive with `category:
+     * null` while the id is perfectly well known. Seeding from the object alone
+     * left `selectedCategory` null, which empties `allowedAttributes`, which
+     * silently strips every attribute off the product on save.
+     */
     const [categoryId, setCategoryId] = useState(
-        product?.category?.id ?? defaultCategoryId ?? "",
+        product?.category?.id ?? product?.categoryId ?? defaultCategoryId ?? "",
     );
     const [images, setImages] = useState<File[]>([]);
     const [formError, setFormError] = useState<string | null>(null);
@@ -179,7 +189,14 @@ export function ProductFormDialog({
                 {isEditing ? (
                     <Input
                         label={t("productForm.category")}
-                        value={product?.category?.name ?? t("common.unknown")}
+                        // Resolved from the dialog's own category list first, so a
+                        // product that arrived without a populated category still
+                        // shows a name once that list lands.
+                        value={
+                            selectedCategory?.name ??
+                            product?.category?.name ??
+                            t("common.unknown")
+                        }
                         disabled
                         hint={t("productForm.categoryLockedHint")}
                         readOnly

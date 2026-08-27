@@ -3,7 +3,8 @@
  *
  * Success responses are always `{ status, message, data: { <resource> } }`,
  * list endpoints add a count field whose *name changes per resource*
- * (`productCount`, `categoryCount`, `orderCount`, `userCount`, `reviewsCount`)
+ * (`productCount`, `categoryCount`, `orderCount`, `ordersCount`, `userCount`,
+ * `reviewsCount` — note `/order` and `/seller/orders` spell it differently)
  * and search endpoints use `results` instead.
  * See server/controllers/*.controller.js.
  */

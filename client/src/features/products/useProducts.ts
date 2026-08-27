@@ -11,7 +11,6 @@ import { ApiError } from "@/lib/api-error";
 import { DEFAULT_PAGE_SIZE } from "@/lib/constants";
 import { queryKeys } from "@/lib/query-keys";
 import * as productService from "@/services/product.service";
-import { searchProducts } from "@/services/search.service";
 import type { Paginated } from "@/types/api.types";
 import type {
     CreateProductPayload,
@@ -50,32 +49,13 @@ export function useProduct(productId: string) {
     });
 }
 
-/**
- * A seller's own catalog.
- *
- * The backend has no seller-scoped listing endpoint, and paging through
- * `GET /product` would only ever filter one page at a time — a seller whose
- * products sit on page 5 would see nothing on page 1. `GET /search/products`
- * is unpaginated and returns every match (an empty term matches all, via the
- * controller's `title || ""`), so it is the only call that can answer
- * "everything I sell" correctly. It requires a session, which a seller has.
- */
-export function useMyProducts(sellerId: string | undefined) {
-    return useQuery<Product[], ApiError>({
-        queryKey: queryKeys.products.mine(sellerId ?? ""),
-        queryFn: async () => {
-            const all = await searchProducts("");
-            return all.filter((product) => product.seller?.id === sellerId);
-        },
-        enabled: Boolean(sellerId),
-    });
-}
-
 function useProductInvalidation() {
     const queryClient = useQueryClient();
     return () => {
         void queryClient.invalidateQueries({ queryKey: queryKeys.products.all });
         void queryClient.invalidateQueries({ queryKey: queryKeys.search.all });
+        // A seller's own listing and order views are built from the same rows.
+        void queryClient.invalidateQueries({ queryKey: queryKeys.seller.all });
     };
 }
 

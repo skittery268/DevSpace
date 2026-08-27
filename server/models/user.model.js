@@ -59,6 +59,19 @@ const userSchema = new mongoose.Schema({
         select: false,
         default: 0
     },
+    changeEmailAttempts: {
+        type: Number,
+        select: false,
+        default: 0
+    },
+    changeEmailExpires: {
+        type: Date,
+        select: false
+    },
+    changeEmailCode: {
+        type: String,
+        select: false,
+    },
     twoFactorEnabled: {
         type: Boolean,
         default: false,
@@ -109,26 +122,32 @@ userSchema.methods.sendVerificationToken = async function () {
 };
 
 // Method to send reset password code in user email
-userSchema.methods.sendResetPasswordCode = async function () {
-    const resetCode = crypto.randomInt(100000, 1000000)
+userSchema.methods.sendCode = async function (mode = "password") {
+    const code = crypto.randomInt(100000, 1000000)
 
     const hashedCode = crypto
         .createHash("sha256")
-        .update(resetCode.toString())
+        .update(code.toString())
         .digest("hex");
 
-    this.resetPasswordAttempts = 0;
-    this.resetPasswordExpires = Date.now() + process.env.RESET_PASSWORD_EXPIRES * 60 * 1000;
-    this.passwordResetCode = hashedCode;
+    if (mode === "password") {
+        this.resetPasswordAttempts = 0;
+        this.resetPasswordExpires = Date.now() + process.env.RESET_PASSWORD_EXPIRES * 60 * 1000;
+        this.passwordResetCode = hashedCode;
+    } else {
+        this.changeEmailAttempts = 0;
+        this.changeEmailExpires = Date.now() + process.env.RESET_PASSWORD_EXPIRES * 60 * 1000;
+        this.changeEmailCode = hashedCode;
+    };
 
     await this.save();
 
     const html = `
-        <h1>Reset Your Password</h1>
-        <p>Code for reset password: ${resetCode.toString()}</p>
+        <h1>${mode === "password" ? "Reset Your Password" : "Change Email"}</h1>
+        <p>Code for ${mode === "password" ? "reset password" : "change email"}: ${code.toString()}</p>
     `;
 
-    await sendMail(this.email, "Reset Password", html);
+    await sendMail(this.email, mode === "password" ? "Reset Password" : "Change Email", html);
 };
 
 const User = mongoose.model("User", userSchema);

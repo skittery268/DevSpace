@@ -82,6 +82,17 @@
     */
     --color-scrim: #04100c;
 
+    /*
+      The plane the sign-in / sign-up screen paints its brand half on.
+      Outside the neutral ramp *and* outside `brand-*`: that scale lightens in
+      dark mode, and white display type on a `#34c48c` panel is unreadable.
+      These three stops are fixed, so the panel carries white text at 5:1 or
+      better in both themes.
+    */
+    --color-brand-deep: #062e22;
+    --color-brand-mid: #0a6247;
+    --color-brand-teal: #0d7d6f;
+
     /* ------------------------------------------------------------ status tones */
     /*
       `success` is a green too, so it is pushed a few degrees yellower than the
@@ -345,6 +356,37 @@ input[type="number"] {
  * Faint ruled grid, for hero and CTA panels.
  * Fades out toward the edges so it never meets a border as a hard crop.
  */
+/**
+ * The brand half of the auth split screen.
+ *
+ * A deep plane rather than `bg-brand-gradient`: that gradient is tuned to sit
+ * *under* dark type, and this one has to carry white display type at full
+ * height in both themes.
+ */
+@utility bg-brand-panel {
+    background-color: var(--color-brand-deep);
+    background-image: linear-gradient(
+        152deg,
+        var(--color-brand-deep) 0%,
+        var(--color-brand-mid) 54%,
+        var(--color-brand-teal) 100%
+    );
+}
+
+/** `bg-grid`'s counterpart for dark panels: hairlines in white, not in ink. */
+@utility bg-grid-inverse {
+    background-image:
+        linear-gradient(to right, rgb(255 255 255 / 0.07) 1px, transparent 1px),
+        linear-gradient(to bottom, rgb(255 255 255 / 0.07) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse 85% 62% at 16% 10%, #000 6%, transparent 72%);
+    -webkit-mask-image: radial-gradient(
+        ellipse 85% 62% at 16% 10%,
+        #000 6%,
+        transparent 72%
+    );
+}
+
 @utility bg-grid {
     background-image:
         linear-gradient(

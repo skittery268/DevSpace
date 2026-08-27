@@ -43,6 +43,14 @@ export interface Product {
     stock: number;
     images: string[];
     category: Category | null;
+    /**
+     * The category's id even when the reference was not populated.
+     *
+     * `GET /seller/products` reads with `.lean()` and no populate, so `category`
+     * is `null` there while the id is still known — keeping it lets that view
+     * resolve the name from the cached category list instead of losing it.
+     */
+    categoryId: string | null;
     seller: ProductSeller | null;
     reviewsCount: number;
     attributes: Record<string, string>;

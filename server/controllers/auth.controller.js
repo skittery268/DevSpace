@@ -241,7 +241,7 @@ const forgotPassword = catchAsync(async (req, res, next) => {
         })
     };
 
-    await user.sendResetPasswordCode();
+    await user.sendCode();
 
     res.status(200).json({
         status: "success",

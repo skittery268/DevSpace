@@ -1,10 +1,20 @@
 "use client";
 
-import { Heart, KeyRound, LayoutDashboard, Package, Store } from "lucide-react";
+import {
+    AtSign,
+    Heart,
+    KeyRound,
+    LayoutDashboard,
+    Package,
+    Pencil,
+    Store,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import { ChangeEmailDialog } from "./ChangeEmailDialog";
+import { EditNameDialog } from "./EditNameDialog";
 import { TwoFactorSettings } from "./TwoFactorSettings";
 import { Container, PageHeader } from "@/components/common/Container";
 import { Alert } from "@/components/ui/Alert";
@@ -32,8 +42,13 @@ export function ProfileView() {
     const deleteUser = useDeleteUser();
     const logout = useLogout();
     const [confirmingDelete, setConfirmingDelete] = useState(false);
+    const [editing, setEditing] = useState<"name" | "email" | null>(null);
 
     if (!user) return null;
+
+    // `PATCH /users/email/verify` re-checks the account password, which an
+    // account provisioned through Google never has — the same wall 2FA hits.
+    const canChangeEmail = user.provider === "local";
 
     const activeBanId = getActiveBanId(user);
 
@@ -83,7 +98,19 @@ export function ProfileView() {
             <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-start">
                 <div className="space-y-6">
                     <Card>
-                        <CardHeader title={t("account.profile")} />
+                        <CardHeader
+                            title={t("account.profile")}
+                            action={
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => setEditing("name")}
+                                >
+                                    <Pencil className="size-4" />
+                                    {t("account.editName")}
+                                </Button>
+                            }
+                        />
                         <CardBody>
                             <div className="flex items-start gap-4">
                                 <span className="flex size-14 shrink-0 items-center justify-center rounded-full bg-brand-600 text-base font-bold text-white">
@@ -93,7 +120,21 @@ export function ProfileView() {
                                     <p className="text-lg font-semibold text-ink-900">
                                         {user.fullname}
                                     </p>
-                                    <p className="truncate text-sm text-ink-500">{user.email}</p>
+                                    <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                                        <p className="truncate text-sm text-ink-500">
+                                            {user.email}
+                                        </p>
+                                        {canChangeEmail ? (
+                                            <button
+                                                type="button"
+                                                onClick={() => setEditing("email")}
+                                                className="inline-flex items-center gap-1 text-xs font-medium text-link underline-offset-4 transition-colors hover:text-link-strong hover:underline"
+                                            >
+                                                <AtSign className="size-3.5" aria-hidden />
+                                                {t("account.changeEmail")}
+                                            </button>
+                                        ) : null}
+                                    </div>
                                     <div className="mt-2 flex flex-wrap gap-1.5">
                                         <Badge tone={user.role === "user" ? "neutral" : "brand"}>
                                             {t(roleLabelKey(user.role))}
@@ -130,7 +171,9 @@ export function ProfileView() {
                             </dl>
 
                             <Alert tone="info" className="mt-5">
-                                {t("account.profileNote")}
+                                {canChangeEmail
+                                    ? t("account.profileNote")
+                                    : t("account.profileNoteGoogle")}
                             </Alert>
                         </CardBody>
                     </Card>
@@ -191,6 +234,20 @@ export function ProfileView() {
                     </CardBody>
                 </Card>
             </div>
+
+            <EditNameDialog
+                user={user}
+                open={editing === "name"}
+                onClose={() => setEditing(null)}
+            />
+
+            {canChangeEmail ? (
+                <ChangeEmailDialog
+                    user={user}
+                    open={editing === "email"}
+                    onClose={() => setEditing(null)}
+                />
+            ) : null}
 
             <ConfirmDialog
                 open={confirmingDelete}

@@ -126,9 +126,21 @@ export function canModerateTarget(user: Actor, target: Pick<ApiUser, "_id" | "ro
 /* Navigation                                                                  */
 /* -------------------------------------------------------------------------- */
 
-/** Whether the seller area is worth showing at all. */
+/**
+ * Whether the seller area is worth showing at all.
+ *
+ * This mirrors `sellerRouter.use(..., allowedTo("seller", "admin", "moderator"))`
+ * exactly, and the match is not a coincidence: every `/seller/*` controller
+ * scopes its query to `req.user._id`, so the route answers "what do *I* sell"
+ * for whoever calls it. Ownership, not role, is what fills the page.
+ *
+ * Moderators are in the list because ownership outlives a role change: an
+ * account that listed products as a seller keeps them after being promoted.
+ * They can see and delete those listings but not create or edit — `canCreateProduct`
+ * and `canEditProduct` are what gate the controls, not this.
+ */
 export function hasSellerArea(user: Actor): boolean {
-    return hasRole(user, "seller", "admin");
+    return hasRole(user, "seller", "admin", "moderator");
 }
 
 /** Whether any part of the staff area is reachable for this user. */

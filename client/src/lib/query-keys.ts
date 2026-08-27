@@ -14,7 +14,6 @@ export const queryKeys = {
         byCategory: (categoryId: string, params: PaginationParams) =>
             ["products", "category", categoryId, params] as const,
         detail: (productId: string) => ["products", "detail", productId] as const,
-        mine: (sellerId: string) => ["products", "mine", sellerId] as const,
     },
     categories: {
         all: ["categories"] as const,
@@ -31,6 +30,11 @@ export const queryKeys = {
     orders: {
         all: ["orders"] as const,
         mine: (params: PaginationParams) => ["orders", "mine", params] as const,
+    },
+    seller: {
+        all: ["seller"] as const,
+        products: (params: PaginationParams) => ["seller", "products", params] as const,
+        orders: (params: PaginationParams) => ["seller", "orders", params] as const,
     },
     users: {
         all: ["users"] as const,

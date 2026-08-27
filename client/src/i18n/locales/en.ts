@@ -219,6 +219,15 @@ export const en = {
         signInWithGoogle: "Sign in with Google",
         signUpWithGoogle: "Sign up with Google",
 
+        // The brand plane on the split screen. Short enough to set at display
+        // size without wrapping to four lines in Russian or Georgian.
+        brandSignInTitle: "Everything your space is built on",
+        brandSignInBody:
+            "Sign back in to pick up your cart, your wishlist and every order still in flight.",
+        brandSignUpTitle: "Start building your space",
+        brandSignUpBody:
+            "One account to buy the parts, review what actually works and \u2014 once an administrator approves it \u2014 sell your own.",
+
         loginTitle: "Welcome back",
         loginBody: "Sign in to buy, review and manage your listings.",
         loginFooter: "New to {{app}}?",
@@ -288,8 +297,37 @@ export const en = {
         unverified: "Unverified",
         googleAccount: "Google account",
         emailAccount: "Email account",
+        editName: "Edit name",
+        editNameTitle: "Edit your name",
+        editNameBody:
+            "This is the name shown on your reviews and on the products you sell.",
+        changeEmail: "Change email",
+        changeEmailTitle: "Change your email",
+        changeEmailStepOne:
+            "First, confirm you still have access to the address on the account.",
+        changeEmailStepTwo:
+            "Enter the code sent to {{email}}, then the address you want to move to.",
+        changeEmailAction: "Change email",
+        changeEmailDoneTitle: "Email changed",
+        changeEmailDoneHeading: "Check your new inbox",
+        changeEmailDoneBody:
+            "A verification link is on its way to {{email}}. Open it before signing in again.",
+        changeEmailSessionEnds:
+            "Changing an address marks the account unverified, which ends this session immediately. Sign in again once the new address is verified.",
+        signOutNow: "Sign out",
+        sendCode: "Send code",
+        codeGoesToCurrent:
+            "We'll email a six-digit code to the address on file:",
+        newEmail: "New email address",
+        emailCode: "Code from your inbox",
+        confirmPassword: "Your password",
+        confirmPasswordHint: "Confirms it is you making the change.",
+        noCode: "Didn't get it?",
+        resendCode: "Send a new code",
         profileNote:
-            "Names, emails and roles are set in the database — the API has no endpoint for editing a profile or changing a role, so there is nothing to edit here.",
+            "Your name and email can be changed here. Roles are assigned in the database — the API has no endpoint for changing one.",
+        profileNoteGoogle:
+            "Your name can be changed here. Changing the email address requires confirming an account password, which a Google account does not have. Roles are assigned in the database.",
         passwordTitle: "Password",
         passwordSubtitle:
             "Changing a password goes through the emailed reset code.",
@@ -718,14 +756,41 @@ export const en = {
         statReviewsHint: "What buyers wrote about your products",
         apiNoteTitle: "What the API can and cannot show",
         apiNoteBody:
-            "The backend has no seller-scoped endpoints: there is no per-seller product listing, no sales figures and no view of the orders that contain your products. This page reads the full catalog and filters it to your account, so listings are shown, but revenue and orders are not available.",
+            "Both lists come from GET /seller/products and GET /seller/orders, which the server narrows to what you own. Two things stay out of reach here: an order's status can only be changed through the admin order route, and commission and payout figures live on the Payment record, which has no read endpoint.",
+        onThisPage: "Across the {{listings}} on this page",
+        emptyPageTitle: "Nothing on this page",
+        emptyPageBody: "This page is past the end of your listings.",
         emptyTitle: "You haven't listed anything yet",
         emptyBody:
             "Create your first product and it will appear in the catalog immediately.",
+        emptyBodyReadOnly:
+            "Nothing is listed under your account. Listing a product is limited to sellers and administrators.",
         columnProduct: "Product",
         columnCategory: "Category",
         columnPrice: "Price",
         columnStock: "Stock",
+    },
+
+    sellerOrders: {
+        title: "Orders with your products",
+        subtitle:
+            "Every order containing something you sell. The server trims each one down to your own lines before sending it.",
+        yourShare: "Your share",
+        contact: "Phone",
+        orderTotal: "Order total",
+        allSellers: "all sellers",
+        statOrders: "Orders",
+        statOrdersHint: "Every order containing your products",
+        statUnits: "Units sold",
+        statUnitsHint: "Your products in the orders on this page",
+        statRevenue: "Your revenue",
+        statRevenueHint: "Your lines only, before commission, on this page",
+        emptyTitle: "No orders yet",
+        emptyBody:
+            "Once someone buys one of your products and Stripe confirms the payment, the order appears here.",
+        emptyPageTitle: "Nothing on this page",
+        emptyPageBody: "This page is past the end of your order list.",
+        viewCatalog: "View the catalog",
     },
 
     admin: {
@@ -912,6 +977,7 @@ export const en = {
         codeSixDigits: "Enter the 6-digit code.",
         fullNameMin: "Full name must be at least 5 characters.",
         fullNameMax: "Full name cannot exceed 50 characters.",
+        emailSameAsCurrent: "That is already your email address.",
         countryRequired: "Country is required.",
         cityRequired: "City is required.",
         addressRequired: "Address is required.",
@@ -957,6 +1023,8 @@ export const en = {
         twoFactorEnabled: "Two-factor authentication enabled",
         twoFactorDisabled: "Two-factor authentication disabled",
         accountDeleted: "Account deleted",
+        nameUpdated: "Name updated",
+        codeResent: "New code sent",
         categoryCreated: "Category created",
         categoryUpdated: "Category updated",
         categoryDeleted: "Category deleted",

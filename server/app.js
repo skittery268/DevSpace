@@ -36,6 +36,7 @@ const reviewRouter = require("./routers/review.router");
 const userRouter = require("./routers/user.router");
 const searchRouter = require("./routers/search.router");
 const adminActionRouter = require("./routers/adminAction.router");
+const sellerRouter = require("./routers/seller.router");
 
 // -------------------------------------IMPORTS-------------------------------------
 
@@ -74,6 +75,7 @@ app.use("/api/v1/review", reviewRouter);
 app.use("/api/v1/search", searchRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/admin", adminActionRouter);
+app.use("/api/v1/seller", sellerRouter);
 
 app.all('/*splat', (req, res, next) => {
     next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));

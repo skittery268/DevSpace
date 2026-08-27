@@ -1,19 +1,20 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Lock, Mail } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
-import { AuthCard, AuthLink } from "./AuthCard";
+import { AuthLink } from "./AuthCard";
+import { AuthHeading, AuthSplit } from "./AuthSplit";
 import { AuthDivider, GoogleButton } from "./GoogleButton";
 import { RedirectIfAuthenticated } from "@/components/common/RouteGuard";
 import { Alert } from "@/components/ui/Alert";
 import { Button } from "@/components/ui/Button";
 import { Input, PasswordInput } from "@/components/ui/Field";
 import { useLogin } from "@/features/auth/useAuthMutations";
-import { APP_NAME } from "@/lib/constants";
 import { applyServerErrors } from "@/lib/form-errors";
 import {
     createLoginSchema,
@@ -65,17 +66,15 @@ function LoginFormInner() {
     });
 
     return (
-        <AuthCard
-            title={t("auth.loginTitle")}
-            description={t("auth.loginBody")}
-            footer={
-                <>
-                    {t("auth.loginFooter", { app: APP_NAME })}{" "}
-                    <AuthLink href="/register">{t("auth.signUp")}</AuthLink>
-                </>
-            }
-        >
-            <form onSubmit={onSubmit} className="space-y-4" noValidate>
+        <AuthSplit variant="signIn">
+            <AuthHeading title={t("auth.loginTitle")} description={t("auth.loginBody")} />
+
+            {/*
+                `flex flex-col gap-4` rather than `space-y-4`: the submit button wants
+                a little more air above it than the fields want between them, and a
+                `space-y` rule outranks a `mt-*` on the child it targets.
+            */}
+            <form onSubmit={onSubmit} className="mt-8 flex flex-col gap-4" noValidate>
                 {formError ? <Alert tone="error">{formError}</Alert> : null}
 
                 <Input
@@ -83,6 +82,7 @@ function LoginFormInner() {
                     label={t("auth.email")}
                     autoComplete="email"
                     placeholder={t("auth.emailPlaceholder")}
+                    leading={<Mail className="size-4.5" aria-hidden />}
                     error={errors.email?.message}
                     {...register("email")}
                 />
@@ -92,24 +92,31 @@ function LoginFormInner() {
                         label={t("auth.password")}
                         autoComplete="current-password"
                         placeholder={t("auth.passwordPlaceholder")}
+                        leading={<Lock className="size-4.5" aria-hidden />}
                         error={errors.password?.message}
                         {...register("password")}
                     />
-                    <div className="mt-1.5 text-right">
+                    <div className="mt-2 text-right text-xs">
                         <AuthLink href="/forgot-password">
                             {t("auth.forgotPassword")}
                         </AuthLink>
                     </div>
                 </div>
 
-                <Button type="submit" fullWidth loading={login.isPending}>
+                <Button
+                    type="submit"
+                    size="lg"
+                    fullWidth
+                    loading={login.isPending}
+                    className="mt-2"
+                >
                     {t("auth.signIn")}
                 </Button>
             </form>
 
-            <AuthDivider />
-            <GoogleButton label={t("auth.signInWithGoogle")} />
-        </AuthCard>
+            <AuthDivider className="my-6" />
+            <GoogleButton size="lg" label={t("auth.signInWithGoogle")} />
+        </AuthSplit>
     );
 }
 

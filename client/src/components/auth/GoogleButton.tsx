@@ -2,7 +2,8 @@
 
 import { useTranslation } from "react-i18next";
 
-import { Button } from "@/components/ui/Button";
+import { Button, type ButtonSize } from "@/components/ui/Button";
+import { cn } from "@/lib/utils";
 import { getGoogleAuthUrl } from "@/services/api";
 
 /**
@@ -10,13 +11,26 @@ import { getGoogleAuthUrl } from "@/services/api";
  * with a 302 to Google, and the callback sets the session cookie server-side
  * before redirecting back. XHR cannot follow that, so this leaves the SPA.
  */
-export function GoogleButton({ label }: { label?: string }) {
+export function GoogleButton({
+    label,
+    size = "md",
+}: {
+    label?: string;
+    size?: ButtonSize;
+}) {
     const { t } = useTranslation();
 
     return (
         <Button
             variant="outline"
+            size={size}
             fullWidth
+            // "Зарегистрироваться через Google" wraps to two lines on a phone, and
+            // the size's fixed height would push the second one out of the button.
+            className={cn(
+                "h-auto py-2.5 text-center leading-snug",
+                size === "lg" ? "min-h-12" : "min-h-10",
+            )}
             onClick={() => window.location.assign(getGoogleAuthUrl())}
         >
             <svg className="size-4" viewBox="0 0 24 24" aria-hidden>
@@ -42,16 +56,29 @@ export function GoogleButton({ label }: { label?: string }) {
     );
 }
 
-export function AuthDivider({ label }: { label?: string }) {
+/**
+ * The seam between the credential form and the identity providers.
+ *
+ * The rules fade toward the label rather than butting into it, which is the
+ * difference between a divider that looks drawn and one that looks like two
+ * leftover borders.
+ */
+export function AuthDivider({
+    label,
+    className,
+}: {
+    label?: string;
+    className?: string;
+}) {
     const { t } = useTranslation();
 
     return (
-        <div className="my-5 flex items-center gap-3">
-            <span className="h-px flex-1 bg-ink-200" />
-            <span className="text-xs uppercase tracking-wide text-ink-400">
+        <div className={cn("my-5 flex items-center gap-3.5", className)}>
+            <span className="h-px flex-1 bg-gradient-to-r from-transparent to-ink-200" />
+            <span className="text-[0.6875rem] font-medium uppercase tracking-[0.14em] text-ink-400">
                 {label ?? t("auth.or")}
             </span>
-            <span className="h-px flex-1 bg-ink-200" />
+            <span className="h-px flex-1 bg-gradient-to-l from-transparent to-ink-200" />
         </div>
     );
 }

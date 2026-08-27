@@ -106,7 +106,7 @@ const login = catchAsync(async (req, res, next) => {
             maxAge: process.env.TWO_FA_COOKIE_EXPIRES * 60 * 1000,
             secure: process.env.NODE_MODE === "prod",
             httpOnly: true,
-            sameSite: process.env.NODE_MODE === "dev" ? "lax" : "lax"
+            sameSite: process.env.NODE_MODE === "dev" ? "lax" : "none"
         });
 
         return res.status(200).json({
@@ -124,7 +124,7 @@ const logout = catchAsync(async (req, res, next) => {
     res.clearCookie("at", {
         secure: process.env.NODE_MODE === "prod",
         httpOnly: true,
-        sameSite: process.env.NODE_MODE === "dev" ? "lax" : "lax"
+        sameSite: process.env.NODE_MODE === "dev" ? "lax" : "none"
     });
 
     res.status(200).json({
@@ -173,7 +173,7 @@ const googleCallback = catchAsync(async (req, res, next) => {
             maxAge: process.env.TWO_FA_COOKIE_EXPIRES * 60 * 1000,
             secure: process.env.NODE_MODE === "prod",
             httpOnly: true,
-            sameSite: process.env.NODE_MODE === "dev" ? "lax" : "lax"
+            sameSite: process.env.NODE_MODE === "dev" ? "lax" : "none"
         });
 
         return res.redirect(`${process.env.CLIENT_URL}?requires2FA=true`);
@@ -185,7 +185,7 @@ const googleCallback = catchAsync(async (req, res, next) => {
         maxAge: process.env.COOKIE_EXPIRES * 24 * 60 * 60 * 1000,
         secure: process.env.NODE_MODE === "prod",
         httpOnly: true,
-        sameSite: process.env.NODE_MODE === "dev" ? "lax" : "lax"
+        sameSite: process.env.NODE_MODE === "dev" ? "lax" : "none"
     });
 
     user.password = undefined;
@@ -422,7 +422,7 @@ const verify2FALogin = catchAsync(async (req, res, next) => {
     res.clearCookie("twoFA", {
         secure: process.env.NODE_MODE === "prod",
         httpOnly: true,
-        sameSite: process.env.NODE_MODE === "dev" ? "lax" : "lax"
+        sameSite: process.env.NODE_MODE === "dev" ? "lax" : "none"
     });
 
     createSendToken(res, user);

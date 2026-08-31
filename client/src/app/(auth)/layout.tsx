@@ -17,7 +17,7 @@ import { Logo } from "@/components/layout/Logo";
  */
 export default function AuthLayout({ children }: { children: ReactNode }) {
     return (
-        <div className="relative isolate flex min-h-[calc(100vh-4rem)] items-center justify-center overflow-hidden px-4 py-14">
+        <div className="relative isolate flex min-h-[calc(100dvh-var(--header-h))] items-center justify-center overflow-hidden px-4 py-14">
             <AuroraBackdrop />
             <div className="w-full max-w-md">
                 <div className="mb-7 flex justify-center">

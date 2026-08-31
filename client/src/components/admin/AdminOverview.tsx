@@ -93,12 +93,12 @@ function CategoryBars({
                         {row.id ? (
                             <Link
                                 href={`/categories/${row.id}`}
-                                className="truncate text-sm font-medium text-ink-800 transition-colors hover:text-link"
+                                className="min-w-0 flex-1 truncate text-sm font-medium text-ink-800 transition-colors hover:text-link"
                             >
                                 {row.name}
                             </Link>
                         ) : (
-                            <span className="truncate text-sm font-medium text-ink-500">
+                            <span className="min-w-0 flex-1 truncate text-sm font-medium text-ink-500">
                                 {row.name}
                             </span>
                         )}
@@ -182,7 +182,7 @@ function StockHealth({
         return (
             <div className="space-y-4">
                 <Skeleton className="h-2.5 w-full rounded-full" />
-                <div className="grid gap-3 sm:grid-cols-3">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                     {Array.from({ length: 3 }).map((_, index) => (
                         <Skeleton key={index} className="h-14 w-full" />
                     ))}
@@ -207,12 +207,12 @@ function StockHealth({
                 )}
             </div>
 
-            <dl className="mt-5 grid gap-3 sm:grid-cols-3">
+            <dl className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
                 {segments.map(({ key, label, hint, value, icon: Icon, text }) => (
                     <div key={key} className="rounded-lg border border-ink-200 bg-surface-3 px-3.5 py-3">
-                        <dt className="flex items-center gap-1.5 text-xs font-medium text-ink-600">
+                        <dt className="flex min-w-0 items-center gap-1.5 text-xs font-medium text-ink-600">
                             <Icon className={cn("size-3.5 shrink-0", text)} aria-hidden />
-                            {label}
+                            <span className="min-w-0 truncate">{label}</span>
                         </dt>
                         <dd className="mt-1.5 text-xl font-semibold tabular-nums tracking-tight text-ink-900">
                             {value}
@@ -289,7 +289,7 @@ export function AdminOverview() {
                         <Sparkles className="size-5" aria-hidden />
                     </span>
                     <div className="min-w-0">
-                        <h1 className="text-2xl font-semibold tracking-[-0.03em] text-ink-900 sm:text-3xl">
+                        <h1 className="text-title wrap-anywhere text-ink-900">
                             {t("admin.welcome", { name: firstName })}
                         </h1>
                         <p className="mt-1.5 text-sm text-ink-500">
@@ -350,7 +350,7 @@ export function AdminOverview() {
                 />
             </StatCardGrid>
 
-            <div className="mt-6 grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,22rem)]">
+            <div className="mt-6 grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,22rem)]">
                 <div className="space-y-6">
                     <Card>
                         <CardHeader

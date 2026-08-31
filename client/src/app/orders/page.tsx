@@ -21,7 +21,7 @@ export default async function OrdersPage() {
 
     return (
         <RequireAuth>
-            <Container className="py-10">
+            <Container className="py-page">
                 <PageHeader
                     title={t("orders.title")}
                     description={t("orders.subtitle")}

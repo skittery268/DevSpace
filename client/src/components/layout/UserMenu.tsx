@@ -91,7 +91,7 @@ export function UserMenu() {
                 aria-haspopup="menu"
                 aria-label={t("nav.accountMenu")}
                 className={cn(
-                    "flex items-center gap-1 rounded-full border border-ink-200 bg-surface py-1 pl-1 pr-1.5",
+                    "touch-target flex shrink-0 items-center gap-1 rounded-full border border-ink-200 bg-surface py-1 pl-1 pr-1.5",
                     "transition-[border-color,box-shadow,transform] duration-200 hover:border-brand-300 hover:elev-1 active:scale-95",
                 )}
             >
@@ -111,7 +111,7 @@ export function UserMenu() {
                 <div
                     role="menu"
                     className={cn(
-                        "absolute right-0 z-50 mt-2 w-64 origin-top-right overflow-hidden rounded-xl border border-ink-200 bg-surface-2 elev-3",
+                        "absolute right-0 z-50 mt-2 w-64 max-w-[calc(100vw-2rem)] origin-top-right overflow-hidden rounded-xl border border-ink-200 bg-surface-2 elev-3",
                         closing ? "animate-scale-out pointer-events-none" : "animate-scale-in",
                     )}
                 >
@@ -140,7 +140,7 @@ export function UserMenu() {
                                 href={href}
                                 role="menuitem"
                                 onClick={() => setOpen(false)}
-                                className="flex items-center gap-3 px-4 py-2.5 text-sm text-ink-700 transition-colors hover:bg-ink-100 hover:text-ink-900"
+                                className="touch-target-h flex items-center gap-3 px-4 py-2.5 text-sm text-ink-700 transition-colors hover:bg-ink-100 hover:text-ink-900"
                             >
                                 <Icon className="size-4 text-ink-400" aria-hidden />
                                 {label}
@@ -157,7 +157,7 @@ export function UserMenu() {
                                 logout.mutate();
                             }}
                             disabled={logout.isPending}
-                            className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-danger transition-colors hover:bg-danger-soft disabled:opacity-60"
+                            className="touch-target-h flex w-full items-center gap-3 px-4 py-2.5 text-sm text-danger transition-colors hover:bg-danger-soft disabled:opacity-60"
                         >
                             <LogOut className="size-4" aria-hidden />
                             {logout.isPending ? t("nav.signingOut") : t("nav.signOut")}

@@ -72,9 +72,12 @@ export function Logo({
     const content = (
         <>
             <Mark className={mark} tone={tone} />
+            {/* `truncate` rather than a fixed width: the header is a flex row and
+                    the wordmark is the one item in it that can afford to lose
+                    characters before a control does. */}
             <span
                 className={cn(
-                    "font-semibold tracking-[-0.02em]",
+                    "truncate font-semibold tracking-[-0.02em]",
                     tone === "inverse" ? "text-white" : "text-ink-900",
                     text,
                 )}
@@ -85,14 +88,14 @@ export function Logo({
     );
 
     if (!href) {
-        return <span className={cn("flex items-center gap-2.5", className)}>{content}</span>;
+        return <span className={cn("flex min-w-0 items-center gap-2.5", className)}>{content}</span>;
     }
 
     return (
         <Link
             href={href}
             className={cn(
-                "flex items-center gap-2.5 transition-opacity hover:opacity-80",
+                "flex min-w-0 items-center gap-2.5 transition-opacity hover:opacity-80",
                 className,
             )}
         >

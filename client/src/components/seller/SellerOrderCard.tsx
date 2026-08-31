@@ -44,7 +44,7 @@ export function SellerOrderCard({ order }: { order: SellerOrder }) {
                         </p>
                     </div>
 
-                    <div className="text-right">
+                    <div className="ml-auto shrink-0 text-right">
                         <p className="text-lg font-semibold text-ink-900">
                             {format.price(order.sellerSubtotal)}
                         </p>
@@ -86,28 +86,28 @@ export function SellerOrderCard({ order }: { order: SellerOrder }) {
                     ))}
                 </ul>
 
-                <dl className="grid gap-x-6 gap-y-1 text-sm sm:grid-cols-2">
-                    <div className="flex gap-2">
+                <dl className="grid grid-cols-1 gap-x-6 gap-y-1 text-sm sm:grid-cols-2">
+                    <div className="flex min-w-0 gap-2">
                         <dt className="shrink-0 text-ink-500">{t("orders.shipTo")}</dt>
                         <dd className="min-w-0 truncate font-medium text-ink-900">
                             {order.shipping.fullname}
                         </dd>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex min-w-0 gap-2">
                         <dt className="shrink-0 text-ink-500">{t("orders.address")}</dt>
                         <dd className="min-w-0 truncate font-medium text-ink-900">
                             {order.shipping.address}, {order.shipping.city},{" "}
                             {order.shipping.country} {order.shipping.zipcode}
                         </dd>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex min-w-0 gap-2">
                         <dt className="shrink-0 text-ink-500">{t("sellerOrders.contact")}</dt>
                         <dd className="min-w-0 truncate font-medium text-ink-900">
                             {order.shipping.phone}
                         </dd>
                     </div>
                     {shared ? (
-                        <div className="flex gap-2">
+                        <div className="flex min-w-0 gap-2">
                             <dt className="shrink-0 text-ink-500">
                                 {t("sellerOrders.orderTotal")}
                             </dt>

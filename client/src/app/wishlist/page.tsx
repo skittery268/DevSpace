@@ -24,7 +24,7 @@ export default async function WishlistPage() {
     const { t } = await getServerTranslation();
 
     return (
-        <Container className="py-10">
+        <Container className="py-page">
             <PageHeader
                 title={t("wishlist.title")}
                 description={t("wishlist.subtitle")}

@@ -16,7 +16,7 @@ function GuardLoading() {
     const { t } = useTranslation();
 
     return (
-        <Container className="flex min-h-[50vh] items-center justify-center py-16">
+        <Container className="flex min-h-[50dvh] items-center justify-center py-16">
             <div className="flex flex-col items-center gap-3 text-ink-500">
                 <Spinner className="size-6 text-brand-500" />
                 <p className="text-sm">{t("auth.checkingSession")}</p>

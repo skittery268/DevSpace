@@ -65,7 +65,7 @@ export function OrderCard({ order }: { order: Order }) {
         <Card>
             <CardBody className="space-y-4">
                 <div className="flex flex-wrap items-start justify-between gap-3">
-                    <div>
+                    <div className="min-w-0">
                         <div className="flex flex-wrap items-center gap-2">
                             <h3 className="font-mono text-sm font-semibold text-ink-900">
                                 #{order.id.slice(-8).toUpperCase()}
@@ -77,7 +77,7 @@ export function OrderCard({ order }: { order: Order }) {
                         </p>
                     </div>
 
-                    <div className="text-right">
+                    <div className="ml-auto shrink-0 text-right">
                         <p className="text-lg font-semibold text-ink-900">
                             {format.price(order.totalAmount)}
                         </p>
@@ -120,15 +120,21 @@ export function OrderCard({ order }: { order: Order }) {
                     ))}
                 </ul>
 
-                <dl className="grid gap-x-6 gap-y-1 text-sm sm:grid-cols-2">
-                    <div className="flex gap-2">
-                        <dt className="text-ink-500">{t("orders.shipTo")}</dt>
+                {/*
+                    `grid-cols-1` and `shrink-0` on the labels. Without the explicit
+                    base track the single mobile column is an implicit `auto` one, and
+                    a recipient name that must not wrap set its `min-content` width —
+                    which is how a 390px order list ended up 744px wide.
+                */}
+                <dl className="grid grid-cols-1 gap-x-6 gap-y-1 text-sm sm:grid-cols-2">
+                    <div className="flex min-w-0 gap-2">
+                        <dt className="shrink-0 text-ink-500">{t("orders.shipTo")}</dt>
                         <dd className="min-w-0 truncate font-medium text-ink-900">
                             {order.shipping.fullname}
                         </dd>
                     </div>
-                    <div className="flex gap-2">
-                        <dt className="text-ink-500">{t("orders.address")}</dt>
+                    <div className="flex min-w-0 gap-2">
+                        <dt className="shrink-0 text-ink-500">{t("orders.address")}</dt>
                         <dd className="min-w-0 truncate font-medium text-ink-900">
                             {order.shipping.address}, {order.shipping.city},{" "}
                             {order.shipping.country} {order.shipping.zipcode}
@@ -138,7 +144,7 @@ export function OrderCard({ order }: { order: Order }) {
             </CardBody>
 
             {mayDelete || mayChangeStatus ? (
-                <CardFooter className="justify-between">
+                <CardFooter className="justify-between gap-3">
                     {mayChangeStatus ? (
                         <Select
                             aria-label={t("orders.orderStatus")}
@@ -146,7 +152,8 @@ export function OrderCard({ order }: { order: Order }) {
                             // instead of leaving the dropdown showing a status that never took.
                             value={order.status}
                             disabled={changeStatus.isPending}
-                            className="h-9 w-auto min-w-44"
+                            className="h-11 w-full min-w-0 sm:h-9 sm:w-auto sm:min-w-44"
+                            wrapperClassName="w-full min-w-0 sm:w-auto"
                             onChange={(event) =>
                                 void handleStatusChange(event.target.value as SettableOrderStatus)
                             }

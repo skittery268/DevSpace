@@ -16,7 +16,8 @@ import { useWishlistCount } from "@/features/wishlist/useWishlist";
 import { selectItemCount, useCartStore } from "@/store/cart.store";
 import { toast } from "@/store/toast.store";
 
-const LAYOUT = "grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start";
+const LAYOUT =
+    "grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start";
 
 export function CartView() {
     const { t } = useTranslation();

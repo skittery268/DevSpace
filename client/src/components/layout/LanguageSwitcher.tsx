@@ -49,7 +49,7 @@ export function LanguageSwitcher({ className }: { className?: string }) {
                 aria-label={t("language.change")}
                 title={t("language.current", { language: LOCALE_NAMES[locale] })}
                 className={cn(
-                    "inline-flex h-9.5 items-center gap-1.5 rounded-lg px-2 text-ink-600",
+                    "touch-target inline-flex h-9.5 shrink-0 items-center gap-1.5 rounded-lg px-2 text-ink-600",
                     "transition-colors duration-200 hover:bg-ink-100 hover:text-ink-900 active:scale-95",
                 )}
             >
@@ -62,7 +62,7 @@ export function LanguageSwitcher({ className }: { className?: string }) {
             {open ? (
                 <div
                     role="menu"
-                    className="animate-scale-in absolute right-0 z-50 mt-2 w-44 origin-top-right overflow-hidden rounded-xl border border-ink-200 bg-surface-2 py-1.5 elev-3"
+                    className="animate-scale-in absolute right-0 z-50 mt-2 w-44 max-w-[calc(100vw-2rem)] origin-top-right overflow-hidden rounded-xl border border-ink-200 bg-surface-2 py-1.5 elev-3"
                 >
                     {LOCALES.map((option) => {
                         const active = option === locale;
@@ -77,7 +77,7 @@ export function LanguageSwitcher({ className }: { className?: string }) {
                                     setOpen(false);
                                 }}
                                 className={cn(
-                                    "flex w-full items-center gap-3 px-4 py-2.5 text-sm transition-colors",
+                                    "touch-target-h flex w-full items-center gap-3 px-4 py-2.5 text-sm transition-colors",
                                     active
                                         ? "font-medium text-link"
                                         : "text-ink-700 hover:bg-ink-100 hover:text-ink-900",
@@ -111,7 +111,7 @@ export function LanguageSegmentedControl({ className }: { className?: string }) 
             role="radiogroup"
             aria-label={t("language.label")}
             className={cn(
-                "inline-flex items-center gap-1 rounded-lg border border-ink-200 bg-ink-100 p-1",
+                "inline-flex max-w-full items-center gap-1 rounded-lg border border-ink-200 bg-ink-100 p-1",
                 className,
             )}
         >
@@ -126,7 +126,7 @@ export function LanguageSegmentedControl({ className }: { className?: string }) 
                         aria-label={LOCALE_NAMES[option]}
                         onClick={() => setLocale(option)}
                         className={cn(
-                            "rounded-md px-2.5 py-1.5 text-xs font-medium",
+                            "touch-target-h min-w-11 rounded-md px-2.5 py-1.5 text-xs font-medium max-sm:flex-1",
                             "transition-[background-color,color,box-shadow] duration-200",
                             active
                                 ? "bg-surface text-ink-900 elev-1"

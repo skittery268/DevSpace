@@ -42,7 +42,7 @@ export function ThemeToggle({ className }: { className?: string }) {
             aria-label={isDark ? t("theme.switchToLight") : t("theme.switchToDark")}
             title={isDark ? t("theme.switchToLight") : t("theme.switchToDark")}
             className={cn(
-                "relative inline-flex size-9.5 items-center justify-center rounded-lg text-ink-600",
+                "touch-target relative inline-flex size-9.5 shrink-0 items-center justify-center rounded-lg text-ink-600",
                 "transition-colors duration-200 hover:bg-ink-100 hover:text-ink-900 active:scale-95",
                 className,
             )}
@@ -79,7 +79,10 @@ export function ThemeSegmentedControl({ className }: { className?: string }) {
             role="radiogroup"
             aria-label={t("theme.colourTheme")}
             className={cn(
-                "inline-flex items-center gap-1 rounded-lg border border-ink-200 bg-ink-100 p-1",
+                // `max-w-full` + flexible options: three labelled buttons are
+                // ~290px wide, which is more than a 320px screen has to give. They
+                // share the space instead of pushing the page sideways.
+                "inline-flex max-w-full items-center gap-1 rounded-lg border border-ink-200 bg-ink-100 p-1",
                 className,
             )}
         >
@@ -93,15 +96,15 @@ export function ThemeSegmentedControl({ className }: { className?: string }) {
                         aria-checked={active}
                         onClick={() => setPreference(value)}
                         className={cn(
-                            "inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium",
+                            "touch-target-h inline-flex min-w-0 items-center justify-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium max-sm:flex-1 sm:px-2.5",
                             "transition-[background-color,color,box-shadow] duration-200",
                             active
                                 ? "bg-surface text-ink-900 elev-1"
                                 : "text-ink-500 hover:text-ink-800",
                         )}
                     >
-                        <Icon className="size-3.5" aria-hidden />
-                        {t(labelKey)}
+                        <Icon className="size-3.5 shrink-0" aria-hidden />
+                        <span className="truncate">{t(labelKey)}</span>
                     </button>
                 );
             })}

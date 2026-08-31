@@ -18,11 +18,11 @@ export default function GlobalError({
     return (
         <div className="relative isolate overflow-hidden">
             <AuroraBackdrop />
-            <Container className="flex min-h-[60vh] flex-col items-center justify-center py-20 text-center">
+            <Container className="flex min-h-[60dvh] flex-col items-center justify-center py-20 text-center">
                 <div className="mb-6 flex size-16 items-center justify-center rounded-xl border border-danger-line bg-danger-soft text-danger">
                     <TriangleAlert className="size-7" aria-hidden />
                 </div>
-                <h1 className="text-2xl font-semibold tracking-tight text-ink-900 sm:text-3xl">
+                <h1 className="text-title text-ink-900">
                     {t("states.crashTitle")}
                 </h1>
                 <p className="mt-3 max-w-md text-sm leading-relaxed text-ink-500">

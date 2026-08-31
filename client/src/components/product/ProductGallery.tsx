@@ -82,7 +82,7 @@ export function ProductGallery({
                             type="button"
                             onClick={() => step(-1)}
                             aria-label={t("products.galleryPrevious")}
-                            className="glass absolute left-3 top-1/2 inline-flex size-10 -translate-y-1/2 items-center justify-center rounded-full border border-ink-200 text-ink-700 opacity-0 transition-[opacity,transform] duration-200 hover:scale-105 focus-visible:opacity-100 group-hover:opacity-100"
+                            className="touch-target glass absolute left-3 top-1/2 inline-flex size-10 -translate-y-1/2 items-center justify-center rounded-full border border-ink-200 text-ink-700 opacity-100 transition-[opacity,transform] duration-200 hover:scale-105 focus-visible:opacity-100 lg:opacity-0 lg:group-hover:opacity-100"
                         >
                             <ChevronLeft className="size-5" />
                         </button>
@@ -90,7 +90,7 @@ export function ProductGallery({
                             type="button"
                             onClick={() => step(1)}
                             aria-label={t("products.galleryNext")}
-                            className="glass absolute right-3 top-1/2 inline-flex size-10 -translate-y-1/2 items-center justify-center rounded-full border border-ink-200 text-ink-700 opacity-0 transition-[opacity,transform] duration-200 hover:scale-105 focus-visible:opacity-100 group-hover:opacity-100"
+                            className="touch-target glass absolute right-3 top-1/2 inline-flex size-10 -translate-y-1/2 items-center justify-center rounded-full border border-ink-200 text-ink-700 opacity-100 transition-[opacity,transform] duration-200 hover:scale-105 focus-visible:opacity-100 lg:opacity-0 lg:group-hover:opacity-100"
                         >
                             <ChevronRight className="size-5" />
                         </button>
@@ -106,7 +106,7 @@ export function ProductGallery({
                 <div
                     role="tablist"
                     aria-label={t("products.galleryImages", { title })}
-                    className="mt-3 grid grid-cols-5 gap-2"
+                    className="scrollbar-thin -mx-1 mt-3 flex snap-x snap-mandatory gap-2 overflow-x-auto px-1 pb-1 sm:mx-0 sm:grid sm:grid-cols-5 sm:overflow-visible sm:px-0 sm:pb-0"
                 >
                     {images.map((image, index) => (
                         <button
@@ -120,7 +120,7 @@ export function ProductGallery({
                             })}
                             aria-selected={index === active}
                             className={cn(
-                                "relative aspect-square overflow-hidden rounded-xl border-2 bg-surface transition-[border-color,transform] duration-200 hover:scale-[1.03]",
+                                "relative aspect-square w-16 shrink-0 snap-start overflow-hidden rounded-xl border-2 bg-surface transition-[border-color,transform] duration-200 hover:scale-[1.03] sm:w-auto",
                                 index === active
                                     ? "border-brand-500"
                                     : "border-ink-200 hover:border-ink-300",

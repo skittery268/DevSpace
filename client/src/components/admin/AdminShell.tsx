@@ -39,7 +39,6 @@ interface NavGroup {
     items: NavItem[];
 }
 
-const SIDEBAR_WIDTH = "17rem";
 
 /**
  * The admin console shell.
@@ -137,13 +136,13 @@ export function AdminShell({ children }: { children: ReactNode }) {
 
     const sidebar = (
         <div className="flex h-full flex-col bg-surface">
-            <div className="flex h-17 shrink-0 items-center justify-between gap-2 border-b border-ink-200 px-5">
+            <div className="flex h-[var(--header-h)] shrink-0 items-center justify-between gap-2 border-b border-ink-200 px-5">
                 <Logo href="/admin" />
                 <button
                     type="button"
                     onClick={() => setDrawerOpen(false)}
                     aria-label={t("admin.closeNavigation")}
-                    className="-mr-2 inline-flex size-9 items-center justify-center rounded-lg text-ink-500 transition-colors hover:bg-ink-100 hover:text-ink-900 lg:hidden"
+                    className="touch-target -mr-2 inline-flex size-9 shrink-0 items-center justify-center rounded-lg text-ink-500 transition-colors hover:bg-ink-100 hover:text-ink-900 lg:hidden"
                 >
                     <X className="size-5" />
                 </button>
@@ -236,12 +235,9 @@ export function AdminShell({ children }: { children: ReactNode }) {
     );
 
     return (
-        <div className="min-h-screen bg-ink-50">
+        <div className="min-h-dvh bg-ink-50">
             {/* Desktop rail. Fixed, so the content scrolls under a still sidebar. */}
-            <aside
-                className="fixed inset-y-0 left-0 z-40 hidden border-r border-ink-200 lg:block"
-                style={{ width: SIDEBAR_WIDTH }}
-            >
+            <aside className="fixed inset-y-0 left-0 z-40 hidden w-[var(--admin-rail)] border-r border-ink-200 lg:block">
                 {sidebar}
             </aside>
 
@@ -256,32 +252,32 @@ export function AdminShell({ children }: { children: ReactNode }) {
                         className="animate-fade fixed inset-0 z-40 cursor-default bg-scrim/55 backdrop-blur-sm"
                     />
                     <aside
-                        className="animate-slide-in-left fixed inset-y-0 left-0 z-50 w-[17rem] max-w-[85vw] border-r border-ink-200 elev-3"
+                        className="animate-slide-in-left fixed inset-y-0 left-0 z-50 w-[var(--admin-rail)] max-w-[85vw] border-r border-ink-200 elev-3"
                     >
                         {sidebar}
                     </aside>
                 </div>
             ) : null}
 
-            <div className="lg:pl-[17rem]">
+            <div className="lg:pl-[var(--admin-rail)]">
                 <header className="glass sticky top-0 z-30 border-b border-ink-200">
-                    <div className="flex h-17 items-center gap-3 px-4 sm:px-6 lg:px-8">
+                    <div className="flex h-[var(--header-h)] items-center gap-2 px-[var(--shell-gutter)] sm:gap-3">
                         <button
                             type="button"
                             onClick={() => setDrawerOpen(true)}
                             aria-label={t("admin.openNavigation")}
                             aria-expanded={drawerOpen}
-                            className="-ml-2 inline-flex size-10 shrink-0 items-center justify-center rounded-lg text-ink-600 transition-colors hover:bg-ink-100 hover:text-ink-900 lg:hidden"
+                            className="touch-target -ml-2 inline-flex size-10 shrink-0 items-center justify-center rounded-lg text-ink-600 transition-colors hover:bg-ink-100 hover:text-ink-900 lg:hidden"
                         >
                             <Menu className="size-5" />
                         </button>
 
-                        <div className="min-w-0 lg:hidden">
+                        <div className="min-w-0 flex-1 lg:hidden">
                             <Logo href="/admin" size="sm" />
                         </div>
 
-                        <div className="hidden min-w-0 lg:block">
-                            <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-ink-400">
+                        <div className="hidden min-w-0 flex-1 lg:block">
+                            <p className="truncate text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-ink-400">
                                 {t("admin.console")}
                             </p>
                             <p className="truncate text-sm font-semibold text-ink-900">
@@ -289,7 +285,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
                             </p>
                         </div>
 
-                        <div className="ml-auto flex shrink-0 items-center gap-1.5 sm:gap-2">
+                        <div className="ml-auto flex min-w-0 items-center gap-1 sm:gap-2">
                             <ButtonLink
                                 href="/"
                                 variant="outline"
@@ -304,12 +300,15 @@ export function AdminShell({ children }: { children: ReactNode }) {
                             {user ? (
                                 <Link
                                     href="/profile"
-                                    className="flex items-center gap-2.5 rounded-full border border-ink-200 bg-surface py-1 pl-1 pr-3 transition-[border-color,box-shadow] duration-200 hover:border-brand-300 hover:elev-1"
+                                    className="flex min-w-0 shrink-0 items-center gap-2.5 rounded-full border border-ink-200 bg-surface p-1 transition-[border-color,box-shadow] duration-200 hover:border-brand-300 hover:elev-1 lg:pr-3"
                                 >
-                                    <span className="flex size-7 items-center justify-center rounded-full bg-brand-600 text-[0.6875rem] font-bold text-white">
+                                    <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-brand-600 text-[0.6875rem] font-bold text-white">
                                         {initialsOf(user.fullname) || "?"}
                                     </span>
-                                    <span className="hidden min-w-0 text-left sm:block">
+                                    {/* Bounded, or one long account name is enough to widen
+                                            the whole bar — `truncate` needs something to
+                                            truncate *against*. */}
+                                    <span className="hidden min-w-0 max-w-32 text-left lg:block xl:max-w-44">
                                         <span className="block truncate text-xs font-semibold leading-tight text-ink-900">
                                             {user.fullname}
                                         </span>
@@ -323,8 +322,8 @@ export function AdminShell({ children }: { children: ReactNode }) {
                     </div>
                 </header>
 
-                <main className="px-4 py-7 sm:px-6 sm:py-9 lg:px-8">
-                    <div className="mx-auto max-w-[80rem]">{children}</div>
+                <main className="px-[var(--shell-gutter)] py-7 sm:py-9">
+                    <div className="mx-auto max-w-[80rem] 2xl:max-w-[96rem]">{children}</div>
                 </main>
             </div>
         </div>

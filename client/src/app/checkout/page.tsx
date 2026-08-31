@@ -19,7 +19,7 @@ export default async function CheckoutPage() {
 
     return (
         <RequireAuth>
-            <Container className="py-10">
+            <Container className="py-page">
                 <PageHeader
                     title={t("checkout.title")}
                     description={t("checkout.subtitle")}

@@ -419,7 +419,7 @@ export function AdminUserList() {
                                 value={term}
                                 onChange={(event) => setTerm(event.target.value)}
                                 wrapperClassName="w-full max-w-xs"
-                                className="h-9"
+                                className="h-11 sm:h-9"
                                 aria-label={t("moderation.searchAria")}
                             />
                             <p className="ml-auto text-sm text-ink-500">

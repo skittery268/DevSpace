@@ -17,7 +17,7 @@ export default async function CartPage() {
     const { t } = await getServerTranslation();
 
     return (
-        <Container className="py-10">
+        <Container className="py-page">
             <PageHeader
                 title={t("cart.title")}
                 description={t("cart.subtitle")}

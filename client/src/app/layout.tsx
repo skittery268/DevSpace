@@ -118,7 +118,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                 <AppProviders locale={locale}>
                     {/* The header reads the URL, so it needs a Suspense boundary of its own. */}
                     <Suspense
-                        fallback={<div className="h-17 border-b border-ink-200 bg-surface" />}
+                        fallback={<div className="h-[var(--header-h)] border-b border-ink-200 bg-surface" />}
                     >
                         <SiteHeader />
                     </Suspense>

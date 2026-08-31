@@ -50,14 +50,14 @@ export function ReviewItem({ review }: { review: Review }) {
                 />
             ) : (
                 <>
-                    <div className="flex items-start gap-3">
+                    <div className="flex flex-wrap items-start gap-3">
                         <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-ink-100 text-xs font-semibold text-ink-600">
                             {review.author ? initialsOf(review.author.fullname) : "?"}
                         </span>
 
                         <div className="min-w-0 flex-1">
                             <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                                <span className="text-sm font-semibold text-ink-900">
+                                <span className="min-w-0 wrap-anywhere text-sm font-semibold text-ink-900">
                                     {review.author?.fullname ?? t("reviews.deletedAccount")}
                                 </span>
                                 <RatingStars value={review.rating} />
@@ -70,7 +70,7 @@ export function ReviewItem({ review }: { review: Review }) {
                             </div>
 
                             {review.content ? (
-                                <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-ink-700">
+                                <p className="mt-2 wrap-anywhere whitespace-pre-line text-sm leading-relaxed text-ink-700">
                                     {review.content}
                                 </p>
                             ) : (
@@ -81,7 +81,7 @@ export function ReviewItem({ review }: { review: Review }) {
                         </div>
 
                         {mayEdit || mayDelete ? (
-                            <div className="flex shrink-0 gap-1">
+                            <div className="ml-auto flex shrink-0 gap-1">
                                 {mayEdit ? (
                                     <Button
                                         variant="ghost"

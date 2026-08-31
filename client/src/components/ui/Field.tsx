@@ -177,7 +177,7 @@ export function PasswordInput({
                     onClick={() => setVisible((value) => !value)}
                     aria-label={visible ? t("common.hidePassword") : t("common.showPassword")}
                     aria-pressed={visible}
-                    className="rounded-lg p-2 text-ink-400 transition-colors hover:bg-ink-100 hover:text-ink-700"
+                    className="inline-flex size-9 items-center justify-center rounded-lg text-ink-400 transition-colors hover:bg-ink-100 hover:text-ink-700 max-sm:size-10"
                 >
                     {visible ? (
                         <EyeOff className="size-4" aria-hidden />
@@ -327,7 +327,9 @@ export function Checkbox({
         <label
             htmlFor={inputId}
             className={cn(
-                "group inline-flex cursor-pointer select-none items-center gap-2.5 text-sm text-ink-700",
+                // `min-h-11` below `sm`: the label *is* the hit area for a
+                // checkbox, and a 20px-tall line of text is not one on a phone.
+                "group inline-flex min-h-11 cursor-pointer select-none items-center gap-2.5 text-sm text-ink-700 sm:min-h-0",
                 rest.disabled && "cursor-not-allowed opacity-60",
                 className,
             )}

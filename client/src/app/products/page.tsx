@@ -51,7 +51,7 @@ export default async function ProductsPage() {
     const { t } = await getServerTranslation();
 
     return (
-        <Container className="py-10">
+        <Container className="py-page">
             <PageHeader
                 title={t("products.title")}
                 description={t("products.subtitle")}

@@ -88,7 +88,7 @@ export function ProductFilterBar({
                         value={filters.sort}
                         onChange={(event) => set("sort", event.target.value as ProductSort)}
                         aria-label={t("filters.sortProducts")}
-                        className="h-9 w-auto min-w-44 py-0 text-sm"
+                        className="h-11 w-auto min-w-44 py-0 text-sm sm:h-9"
                         wrapperClassName="gap-0"
                     >
                         {PRODUCT_SORTS.map((sort) => (
@@ -116,7 +116,7 @@ export function ProductFilterBar({
                     label={t("filters.category")}
                     value={filters.categoryId}
                     onChange={(event) => set("categoryId", event.target.value)}
-                    className="h-10"
+                    className="h-11 sm:h-10"
                 >
                     <option value="all">{t("filters.allCategories")}</option>
                     {categories.map((category) => (
@@ -137,7 +137,7 @@ export function ProductFilterBar({
                     placeholder="0"
                     value={filters.minPrice}
                     onChange={(event) => set("minPrice", event.target.value)}
-                    className="h-10"
+                    className="h-11 sm:h-10"
                 />
 
                 <Input
@@ -148,7 +148,7 @@ export function ProductFilterBar({
                     placeholder={t("filters.anyPrice")}
                     value={filters.maxPrice}
                     onChange={(event) => set("maxPrice", event.target.value)}
-                    className="h-10"
+                    className="h-11 sm:h-10"
                 />
 
                 <div className="flex items-end justify-between gap-2 pb-1">

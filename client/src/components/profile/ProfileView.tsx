@@ -95,7 +95,7 @@ export function ProfileView() {
                 description={t("account.subtitle")}
             />
 
-            <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-start">
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-start">
                 <div className="space-y-6">
                     <Card>
                         <CardHeader
@@ -117,18 +117,18 @@ export function ProfileView() {
                                     {initialsOf(user.fullname) || "?"}
                                 </span>
                                 <div className="min-w-0">
-                                    <p className="text-lg font-semibold text-ink-900">
+                                    <p className="wrap-anywhere text-lg font-semibold text-ink-900">
                                         {user.fullname}
                                     </p>
                                     <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                                        <p className="truncate text-sm text-ink-500">
+                                        <p className="min-w-0 truncate text-sm text-ink-500">
                                             {user.email}
                                         </p>
                                         {canChangeEmail ? (
                                             <button
                                                 type="button"
                                                 onClick={() => setEditing("email")}
-                                                className="inline-flex items-center gap-1 text-xs font-medium text-link underline-offset-4 transition-colors hover:text-link-strong hover:underline"
+                                                className="inline-flex min-h-11 shrink-0 items-center gap-1 text-xs font-medium text-link underline-offset-4 transition-colors hover:text-link-strong hover:underline sm:min-h-0"
                                             >
                                                 <AtSign className="size-3.5" aria-hidden />
                                                 {t("account.changeEmail")}
@@ -154,15 +154,19 @@ export function ProfileView() {
                             </div>
 
                             <dl className="mt-5 divide-y divide-ink-200 border-t border-ink-200 text-sm">
-                                <div className="flex justify-between gap-4 py-2.5">
-                                    <dt className="text-ink-500">{t("account.memberSince")}</dt>
-                                    <dd className="font-medium text-ink-900">
+                                <div className="flex flex-wrap justify-between gap-x-4 gap-y-0.5 py-2.5">
+                                    <dt className="shrink-0 text-ink-500">
+                                        {t("account.memberSince")}
+                                    </dt>
+                                    <dd className="min-w-0 font-medium text-ink-900">
                                         {format.date(user.createdAt)}
                                     </dd>
                                 </div>
-                                <div className="flex justify-between gap-4 py-2.5">
-                                    <dt className="text-ink-500">{t("account.accountStatus")}</dt>
-                                    <dd className="font-medium text-ink-900">
+                                <div className="flex flex-wrap justify-between gap-x-4 gap-y-0.5 py-2.5">
+                                    <dt className="shrink-0 text-ink-500">
+                                        {t("account.accountStatus")}
+                                    </dt>
+                                    <dd className="min-w-0 font-medium text-ink-900">
                                         {activeBanId
                                             ? t("account.restricted")
                                             : t("account.active")}
@@ -216,7 +220,7 @@ export function ProfileView() {
                     </Card>
                 </div>
 
-                <Card className="lg:sticky lg:top-20">
+                <Card className="lg:sticky lg:top-[calc(var(--header-h)+1.5rem)]">
                     <CardHeader title={t("account.shortcuts")} />
                     <CardBody className="space-y-2">
                         {shortcuts.map(({ href, label, icon: Icon }) => (

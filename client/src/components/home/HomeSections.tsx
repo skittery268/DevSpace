@@ -38,7 +38,10 @@ const HOME_PAGE_SIZE = 12;
  */
 export function HeroTitle({ app }: { app: string }) {
     return (
-        <h1 className="mt-7 text-4xl font-semibold leading-[1.06] tracking-[-0.035em] text-ink-900 sm:text-5xl lg:text-6xl xl:text-display">
+        // One fluid size instead of `text-4xl sm:text-5xl lg:text-6xl
+        // xl:text-display` — that ladder snapped at three breakpoints and, at
+        // 3.25rem, actually shrank the headline again above 1280px.
+        <h1 className="text-display mt-7 wrap-anywhere text-ink-900">
             <Trans
                 i18nKey="home.heroTitle"
                 values={{ app }}

@@ -36,7 +36,17 @@ import { canDeleteProduct, canEditProduct } from "@/lib/permissions";
 import { humanizeKey, initialsOf } from "@/lib/utils";
 import { toast } from "@/store/toast.store";
 
-const LAYOUT = "grid gap-8 lg:grid-cols-[minmax(0,48%)_minmax(0,1fr)] lg:gap-14";
+/**
+ * `grid-cols-1` is not decoration.
+ *
+ * A grid with no explicit template places its items in an implicit `auto`
+ * track, and `auto` is floored at `min-content` — so a description holding one
+ * long URL made this column 810px wide on a 390px phone and took the page with
+ * it. `grid-cols-1` is `repeat(1, minmax(0, 1fr))`, which floors the track at
+ * zero instead.
+ */
+const LAYOUT =
+    "grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,48%)_minmax(0,1fr)] lg:gap-14";
 
 /** Claims the API can actually back, so the shelf is not decorative filler. */
 const ASSURANCES = [
@@ -143,7 +153,7 @@ export function ProductDetail({ productId }: { productId: string }) {
                 </Link>
                 {product.category ? (
                     <>
-                        <ChevronRight className="size-3.5 text-ink-400" aria-hidden />
+                        <ChevronRight className="size-3.5 shrink-0 text-ink-400" aria-hidden />
                         <Link
                             href={`/categories/${product.category.id}`}
                             className="transition-colors hover:text-link"
@@ -152,12 +162,14 @@ export function ProductDetail({ productId }: { productId: string }) {
                         </Link>
                     </>
                 ) : null}
-                <ChevronRight className="size-3.5 text-ink-400" aria-hidden />
-                <span className="truncate font-medium text-ink-700">{product.title}</span>
+                <ChevronRight className="size-3.5 shrink-0 text-ink-400" aria-hidden />
+                <span className="min-w-0 max-w-full flex-1 truncate font-medium text-ink-700">
+                    {product.title}
+                </span>
             </nav>
 
             <div className={LAYOUT}>
-                <div className="lg:sticky lg:top-24 lg:self-start">
+                <div className="lg:sticky lg:top-[calc(var(--header-h)+1.5rem)] lg:self-start">
                     <ProductGallery images={product.images} title={product.title} />
                 </div>
 
@@ -175,7 +187,7 @@ export function ProductDetail({ productId }: { productId: string }) {
                         </span>
                     )}
 
-                    <h1 className="mt-2.5 text-[1.75rem] font-semibold leading-[1.12] tracking-[-0.03em] text-ink-900 sm:text-[2.5rem]">
+                    <h1 className="mt-2.5 wrap-anywhere text-[clamp(1.5rem,1.1rem+2vw,2.5rem)] font-semibold leading-[1.12] tracking-[-0.03em] text-ink-900">
                         {product.title}
                     </h1>
 
@@ -200,7 +212,7 @@ export function ProductDetail({ productId }: { productId: string }) {
                         </a>
                     </div>
 
-                    <p className="mt-6 whitespace-pre-line text-sm leading-relaxed text-ink-600">
+                    <p className="mt-6 wrap-anywhere whitespace-pre-line text-sm leading-relaxed text-ink-600">
                         {product.description}
                     </p>
 
@@ -211,13 +223,16 @@ export function ProductDetail({ productId }: { productId: string }) {
                             max={maxQuantity}
                             disabled={product.stock <= 0}
                         />
+                        <WishlistButton product={product} size="lg" className="sm:order-last" />
+                        {/* Full width on its own row below `sm`, where a stepper, a
+                                label as long as "Add to cart" and a second button cannot
+                                share 288px without one of them becoming unreadable. */}
                         <AddToCartButton
                             product={product}
                             quantity={quantity}
                             size="lg"
-                            className="flex-1 sm:flex-none"
+                            className="order-last w-full sm:order-none sm:w-auto sm:flex-1 lg:flex-none"
                         />
-                        <WishlistButton product={product} size="lg" />
                     </div>
 
                     {mayEdit || mayDelete ? (
@@ -267,23 +282,37 @@ export function ProductDetail({ productId }: { productId: string }) {
                         ))}
                     </ul>
 
+                    {/*
+                        A specification row is a label and a value that can both be long
+                        — "Panel technology" against "VA quantum-dot backlit". Below
+                        `sm` they stack; above it they sit on one line with the value
+                        right-aligned and free to wrap, which is what `min-w-0` on both
+                        halves buys.
+                    */}
                     <dl className="mt-8 divide-y divide-ink-200 border-t border-ink-200 text-sm">
-                        <div className="flex justify-between gap-4 py-3.5">
-                            <dt className="text-ink-500">{t("products.seller")}</dt>
-                            <dd className="font-medium text-ink-900">
+                        <div className="flex flex-col gap-0.5 py-3.5 sm:flex-row sm:justify-between sm:gap-4">
+                            <dt className="min-w-0 text-ink-500">{t("products.seller")}</dt>
+                            <dd className="min-w-0 wrap-anywhere font-medium text-ink-900 sm:text-right">
                                 {product.seller?.fullname ?? t("common.unknown")}
                             </dd>
                         </div>
-                        <div className="flex justify-between gap-4 py-3.5">
-                            <dt className="text-ink-500">{t("products.listed")}</dt>
-                            <dd className="font-medium text-ink-900">
+                        <div className="flex flex-col gap-0.5 py-3.5 sm:flex-row sm:justify-between sm:gap-4">
+                            <dt className="min-w-0 text-ink-500">{t("products.listed")}</dt>
+                            <dd className="min-w-0 font-medium text-ink-900 sm:text-right">
                                 {format.date(product.createdAt)}
                             </dd>
                         </div>
                         {attributeEntries.map(([key, value]) => (
-                            <div key={key} className="flex justify-between gap-4 py-3.5">
-                                <dt className="text-ink-500">{humanizeKey(key)}</dt>
-                                <dd className="font-medium text-ink-900">{String(value)}</dd>
+                            <div
+                                key={key}
+                                className="flex flex-col gap-0.5 py-3.5 sm:flex-row sm:justify-between sm:gap-4"
+                            >
+                                <dt className="min-w-0 wrap-anywhere text-ink-500">
+                                    {humanizeKey(key)}
+                                </dt>
+                                <dd className="min-w-0 wrap-anywhere font-medium text-ink-900 sm:text-right">
+                                    {String(value)}
+                                </dd>
                             </div>
                         ))}
                     </dl>
@@ -292,7 +321,7 @@ export function ProductDetail({ productId }: { productId: string }) {
 
             <div
                 id="reviews"
-                className="mt-16 grid gap-6 scroll-mt-24 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start"
+                className="mt-16 grid grid-cols-1 gap-6 scroll-mt-[calc(var(--header-h)+1.5rem)] lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start"
             >
                 <ReviewSection productId={product.id} />
 

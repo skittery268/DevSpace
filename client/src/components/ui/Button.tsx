@@ -20,7 +20,7 @@ export type ButtonSize = "sm" | "md" | "lg" | "icon";
  * it through the global transition override in globals.css.
  */
 const BASE =
-    "relative inline-flex select-none items-center justify-center gap-2 rounded-lg font-medium tracking-[-0.005em] " +
+    "relative inline-flex max-w-full select-none items-center justify-center gap-2 rounded-lg font-medium tracking-[-0.005em] " +
     "transition-[background-color,border-color,color,box-shadow,transform] duration-200 ease-out " +
     "active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none";
 
@@ -43,11 +43,19 @@ const VARIANTS: Record<ButtonVariant, string> = {
         "bg-danger-solid text-white elev-1 hover:bg-danger-solid-hover active:brightness-95",
 };
 
+/**
+ * Heights step up on a phone and settle back at `sm`.
+ *
+ * The desktop scale is deliberately compact — a 36px `sm` button is right in a
+ * dense table row — but 36px is under the ~44px a fingertip needs, and these
+ * are the buttons the app repeats most: add to cart, save, delete, write a
+ * review. The floor applies below 640px only, so nothing changes on a desktop.
+ */
 const SIZES: Record<ButtonSize, string> = {
-    sm: "h-9 px-3.5 text-sm",
-    md: "h-10 px-4 text-sm",
-    lg: "h-12 px-6 text-[0.9375rem]",
-    icon: "size-10 p-0",
+    sm: "h-11 px-3.5 text-sm sm:h-9",
+    md: "h-11 px-4 text-sm sm:h-10",
+    lg: "h-12 px-5 text-[0.9375rem] sm:px-6",
+    icon: "size-11 p-0 sm:size-10",
 };
 
 interface CommonProps {

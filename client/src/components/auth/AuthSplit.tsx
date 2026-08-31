@@ -153,7 +153,7 @@ export function AuthHeading({
 }) {
     return (
         <header>
-            <h1 className="text-[1.625rem] font-semibold tracking-[-0.03em] text-ink-900 sm:text-[1.75rem]">
+            <h1 className="text-subtitle wrap-anywhere text-ink-900">
                 {title}
             </h1>
             {description ? (

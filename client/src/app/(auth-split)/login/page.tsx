@@ -18,7 +18,7 @@ export default function LoginPage() {
     return (
         <Suspense
             fallback={
-                <div className="flex min-h-[60vh] items-center justify-center py-16">
+                <div className="flex min-h-[60dvh] items-center justify-center py-16">
                     <Spinner className="size-6 text-brand-500" />
                 </div>
             }

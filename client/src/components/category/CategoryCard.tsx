@@ -67,7 +67,7 @@ export function CategoryCard({
 
             <div className="relative p-4 sm:p-5">
                 <div className="flex flex-wrap items-center gap-2">
-                    <h3 className="text-base font-semibold tracking-tight text-white">
+                    <h3 className="min-w-0 wrap-anywhere text-base font-semibold tracking-tight text-white">
                         {category.name}
                     </h3>
                     {!category.isActive ? (
@@ -107,7 +107,8 @@ export function CategoryCard({
     );
 }
 
-const GRID = "grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3";
+const GRID =
+    "grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 3xl:grid-cols-4";
 
 export function CategoryGrid({
     categories,

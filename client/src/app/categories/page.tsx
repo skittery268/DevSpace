@@ -51,7 +51,7 @@ export default async function CategoriesPage() {
     const { t } = await getServerTranslation();
 
     return (
-        <Container className="py-10">
+        <Container className="py-page">
             <PageHeader
                 title={t("categories.title")}
                 description={t("categories.subtitle")}

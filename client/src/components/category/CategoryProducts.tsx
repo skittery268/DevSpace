@@ -51,9 +51,12 @@ export function CategoryProducts({ categoryId }: { categoryId: string }) {
             </nav>
 
             {categoryQuery.isPending ? (
+                // `max-w-*`, not `w-*`: a 24rem placeholder is wider than a
+                // 390px phone's content column, and a skeleton that overflows
+                // makes the page scroll sideways before the data even lands.
                 <div className="mb-6 space-y-2">
-                    <Skeleton className="h-8 w-64" />
-                    <Skeleton className="h-4 w-96" />
+                    <Skeleton className="h-8 w-full max-w-64" />
+                    <Skeleton className="h-4 w-full max-w-96" />
                 </div>
             ) : (
                 <PageHeader

@@ -46,14 +46,14 @@ export function Pagination({
     const pages = buildPages(page, pageCount);
 
     const stepClass =
-        "inline-flex size-10 items-center justify-center rounded-lg border border-ink-200 bg-surface text-ink-600 " +
+        "inline-flex size-11 shrink-0 items-center justify-center rounded-lg border border-ink-200 bg-surface text-ink-600 " +
         "transition-[background-color,border-color,color,transform] duration-200 hover:border-ink-300 hover:bg-ink-100 hover:text-ink-900 " +
         "active:scale-95 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-surface";
 
     return (
         <nav
             aria-label={t("pagination.label")}
-            className={cn("flex flex-wrap items-center justify-center gap-1.5", className)}
+            className={cn("flex items-center justify-center gap-1.5", className)}
         >
             <button
                 type="button"
@@ -65,36 +65,48 @@ export function Pagination({
                 <ChevronLeft className="size-4" />
             </button>
 
-            {pages.map((entry, index) =>
-                entry === "gap" ? (
-                    <span
-                        key={`gap-${index}`}
-                        aria-hidden
-                        className="px-1 text-sm text-ink-400"
-                    >
-                        …
-                    </span>
-                ) : (
-                    <button
-                        key={entry}
-                        type="button"
-                        onClick={() => onPageChange(entry)}
-                        disabled={disabled}
-                        aria-current={entry === page ? "page" : undefined}
-                        aria-label={t("pagination.page", { page: entry })}
-                        className={cn(
-                            "inline-flex h-10 min-w-10 items-center justify-center rounded-lg border px-2.5 text-sm font-medium tabular-nums",
-                            "transition-[background-color,border-color,color,transform] duration-200 active:scale-95",
-                            entry === page
-                                ? "border-transparent brand-fill"
-                                : "border-ink-200 bg-surface text-ink-600 hover:border-ink-300 hover:bg-ink-100 hover:text-ink-900",
-                            disabled && "cursor-not-allowed opacity-60",
-                        )}
-                    >
-                        {entry}
-                    </button>
-                ),
-            )}
+            {/*
+                Nine 40px buttons need 400px, so on a phone they used to wrap into
+                three ragged rows that pushed the footer down and made "next" hard to
+                find. Below `sm` the numbers are replaced by the one fact a reader
+                needs — where they are — and the two controls that actually move.
+            */}
+            <span className="px-3 text-sm font-medium tabular-nums text-ink-600 sm:hidden">
+                {t("common.pageOf", { page, pageCount })}
+            </span>
+
+            <span className="hidden items-center gap-1.5 sm:flex sm:flex-wrap sm:justify-center">
+                {pages.map((entry, index) =>
+                    entry === "gap" ? (
+                        <span
+                            key={`gap-${index}`}
+                            aria-hidden
+                            className="px-1 text-sm text-ink-400"
+                        >
+                            …
+                        </span>
+                    ) : (
+                        <button
+                            key={entry}
+                            type="button"
+                            onClick={() => onPageChange(entry)}
+                            disabled={disabled}
+                            aria-current={entry === page ? "page" : undefined}
+                            aria-label={t("pagination.page", { page: entry })}
+                            className={cn(
+                                "inline-flex h-11 min-w-11 items-center justify-center rounded-lg border px-2.5 text-sm font-medium tabular-nums",
+                                "transition-[background-color,border-color,color,transform] duration-200 active:scale-95",
+                                entry === page
+                                    ? "border-transparent brand-fill"
+                                    : "border-ink-200 bg-surface text-ink-600 hover:border-ink-300 hover:bg-ink-100 hover:text-ink-900",
+                                disabled && "cursor-not-allowed opacity-60",
+                            )}
+                        >
+                            {entry}
+                        </button>
+                    ),
+                )}
+            </span>
 
             <button
                 type="button"

@@ -70,7 +70,10 @@ export function WishlistIconButton({
                     : t("products.saveToWishlistShort")
             }
             className={cn(
-                "glass inline-flex size-8.5 items-center justify-center rounded-full border elev-1",
+                // 34px is a comfortable mark on a desktop card and a miss on a
+                // phone; `touch-target` lifts it to 44px where a finger is doing
+                // the pointing without changing how it looks on a mouse.
+                "touch-target glass inline-flex size-8.5 items-center justify-center rounded-full border elev-1",
                 "transition-[transform,border-color,background-color,color] duration-200 hover:scale-110 active:scale-90",
                 saved
                     ? "border-danger-line bg-danger-soft/90 text-danger"

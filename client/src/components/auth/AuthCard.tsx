@@ -14,7 +14,7 @@ export function AuthCard({
 }) {
     return (
         <div className="rounded-xl border border-ink-200 bg-surface p-6 elev-2 sm:p-8">
-            <h1 className="text-xl font-semibold tracking-tight text-ink-900 sm:text-2xl">
+            <h1 className="wrap-anywhere text-[clamp(1.25rem,1.1rem+0.75vw,1.5rem)] font-semibold tracking-tight text-ink-900">
                 {title}
             </h1>
             {description ? (

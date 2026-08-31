@@ -177,16 +177,19 @@ export function Modal({
                 aria-busy={busy || undefined}
                 tabIndex={-1}
                 className={cn(
-                    "flex max-h-[92vh] w-full flex-col overflow-hidden rounded-t-3xl border border-ink-200 bg-surface-2 elev-3 outline-none",
+                    // `dvh`, not `vh`: on a phone `vh` is the *large* viewport, so a
+                    // 92vh sheet is taller than the screen whenever the URL bar is
+                    // showing — and taller still once a keyboard opens over a form.
+                    "flex max-h-[92dvh] w-full flex-col overflow-hidden rounded-t-3xl border border-ink-200 bg-surface-2 elev-3 outline-none",
                     closing ? "animate-scale-out" : "animate-scale-in",
-                    "sm:max-h-[90vh] sm:rounded-xl",
+                    "sm:max-h-[90dvh] sm:rounded-xl",
                     SIZES[size],
                     className,
                 )}
             >
-                <div className="flex shrink-0 items-start justify-between gap-4 border-b border-ink-200 px-5 py-4">
+                <div className="flex shrink-0 items-start justify-between gap-4 border-b border-ink-200 px-4 py-4 sm:px-5">
                     <div className="min-w-0">
-                        <h2 className="text-base font-semibold tracking-tight text-ink-900">
+                        <h2 className="wrap-anywhere text-base font-semibold tracking-tight text-ink-900">
                             {title}
                         </h2>
                         {description ? (
@@ -200,18 +203,26 @@ export function Modal({
                         onClick={requestClose}
                         disabled={busy}
                         aria-label={t("common.closeDialog")}
-                        className="-mr-1 rounded-lg p-1.5 text-ink-500 transition-colors hover:bg-ink-100 hover:text-ink-900 disabled:pointer-events-none disabled:opacity-40"
+                        className="touch-target -mr-1 inline-flex shrink-0 items-center justify-center rounded-lg p-1.5 text-ink-500 transition-colors hover:bg-ink-100 hover:text-ink-900 disabled:pointer-events-none disabled:opacity-40"
                     >
                         <X className="size-4" />
                     </button>
                 </div>
 
                 {children ? (
-                    <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">{children}</div>
+                    <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-4 sm:px-5">
+                        {children}
+                    </div>
                 ) : null}
 
+                {/*
+                    Below 400px the action buttons stack and fill the row, with the
+                    confirming action on top — `flex-col-reverse` keeps Cancel first in
+                    the DOM (and so first in the tab order) while putting the primary
+                    action where a thumb reaches it.
+                */}
                 {footer ? (
-                    <div className="flex shrink-0 flex-wrap items-center justify-end gap-2 border-t border-ink-200 bg-surface-2 px-5 py-3">
+                    <div className="flex shrink-0 flex-col-reverse items-stretch gap-2 border-t border-ink-200 bg-surface-2 px-4 py-3 min-[400px]:flex-row min-[400px]:flex-wrap min-[400px]:items-center min-[400px]:justify-end sm:px-5 [&>*]:w-full min-[400px]:[&>*]:w-auto">
                         {footer}
                     </div>
                 ) : null}

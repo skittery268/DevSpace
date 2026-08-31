@@ -25,6 +25,7 @@ import {
     TR,
 } from "@/components/ui/DataTable";
 import { Pagination } from "@/components/ui/Pagination";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { StatCard, StatCardGrid } from "@/components/ui/StatCard";
 import { useAuth } from "@/features/auth/useAuth";
 import { useDeleteProduct } from "@/features/products/useProducts";
@@ -213,7 +214,100 @@ export function SellerDashboard() {
                             </p>
                         }
                     >
-                        <Table>
+                        {/*
+                            A five-column table on a 390px screen can only scroll
+                            sideways, and everything a seller opens this page for —
+                            price, stock, edit, delete — lives in the columns that
+                            scroll away. Below `md` the same rows are stacked cards
+                            instead, the way the moderation list already does it.
+                        */}
+                        <ul className="divide-y divide-ink-200 md:hidden">
+                            {isPending
+                                ? Array.from({ length: 4 }).map((_, index) => (
+                                        <li key={index} className="px-4 py-4">
+                                            <Skeleton className="h-16 w-full" />
+                                        </li>
+                                    ))
+                                : products.map((product) => (
+                                        <li key={product.id} className="px-4 py-4">
+                                            <div className="flex items-start gap-3">
+                                                <Link
+                                                    href={`/products/${product.id}`}
+                                                    className="relative size-14 shrink-0 overflow-hidden rounded-lg border border-ink-200 bg-ink-100"
+                                                >
+                                                    <RemoteImage
+                                                        src={product.images[0]}
+                                                        alt={product.title}
+                                                        sizes="56px"
+                                                    />
+                                                </Link>
+                                                <div className="min-w-0 flex-1">
+                                                    <Link
+                                                        href={`/products/${product.id}`}
+                                                        className="block wrap-anywhere text-sm font-medium text-ink-900 transition-colors hover:text-link"
+                                                    >
+                                                        {product.title}
+                                                    </Link>
+                                                    <p className="mt-0.5 truncate text-xs text-ink-500">
+                                                        {product.category?.name ??
+                                                            t("common.uncategorized")}
+                                                    </p>
+                                                    <p className="mt-1.5 text-sm font-semibold tabular-nums text-ink-900">
+                                                        {format.price(product.price)}
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
+                                                <Badge
+                                                    tone={
+                                                        product.stock <= 0
+                                                            ? "danger"
+                                                            : product.stock <= 5
+                                                                ? "warning"
+                                                                : "success"
+                                                    }
+                                                >
+                                                    {product.stock <= 0
+                                                        ? t("products.outOfStock")
+                                                        : t("products.inStock", {
+                                                                count: product.stock,
+                                                            })}
+                                                </Badge>
+
+                                                <div className="flex items-center gap-1">
+                                                    {canEditProduct(user, product) ? (
+                                                        <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                            onClick={() =>
+                                                                setEditing({ mode: "edit", product })
+                                                            }
+                                                        >
+                                                            <Pencil className="size-4" />
+                                                            {t("common.edit")}
+                                                        </Button>
+                                                    ) : null}
+                                                    {canDeleteProduct(user, product) ? (
+                                                        <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                            className="text-danger hover:bg-danger-soft hover:text-danger"
+                                                            aria-label={t("products.deleteAria", {
+                                                                title: product.title,
+                                                            })}
+                                                            onClick={() => setPendingDelete(product)}
+                                                        >
+                                                            <Trash2 className="size-4" />
+                                                        </Button>
+                                                    ) : null}
+                                                </div>
+                                            </div>
+                                        </li>
+                                    ))}
+                        </ul>
+
+                        <Table className="hidden md:table">
                             <THead>
                                 <TH className="w-[42%]">{t("seller.columnProduct")}</TH>
                                 <TH className="w-32">{t("seller.columnCategory")}</TH>

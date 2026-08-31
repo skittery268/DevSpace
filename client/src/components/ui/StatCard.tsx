@@ -45,7 +45,7 @@ export function StatCard({
     const body = (
         <>
             <div className="flex items-start justify-between gap-3">
-                <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-ink-500">
+                <p className="min-w-0 text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-ink-500">
                     {label}
                 </p>
                 <span
@@ -58,7 +58,7 @@ export function StatCard({
                 </span>
             </div>
 
-            <p className="mt-3 text-[1.75rem] font-semibold leading-none tracking-[-0.03em] tabular-nums text-ink-900 sm:mt-4 sm:text-[2rem]">
+            <p className="mt-3 wrap-anywhere text-[clamp(1.375rem,1.15rem+1.1vw,2rem)] font-semibold leading-tight tracking-[-0.03em] tabular-nums text-ink-900 sm:mt-4">
                 {loading ? <Skeleton className="h-8 w-20" /> : value}
             </p>
 
@@ -95,7 +95,12 @@ export function StatCardGrid({
         // Both dashboards open on this row, so the stagger lands here rather than
         // in either console: the KPIs are the first thing on the screen and the
         // one place a console can afford a moment of motion.
-        <div className={cn("stagger grid gap-4 sm:grid-cols-2 xl:grid-cols-4", className)}>
+        <div
+            className={cn(
+                "stagger grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4",
+                className,
+            )}
+        >
             {children}
         </div>
     );

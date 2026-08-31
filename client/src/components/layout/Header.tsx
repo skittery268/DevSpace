@@ -58,7 +58,7 @@ function CountLink({
             href={href}
             aria-label={t("nav.countedLink", { label, count })}
             className={cn(
-                "relative inline-flex size-9.5 items-center justify-center rounded-lg",
+                "touch-target relative inline-flex size-9.5 shrink-0 items-center justify-center rounded-lg",
                 "transition-[background-color,color,transform] duration-200 active:scale-95",
                 active
                     ? "bg-brand-soft text-link"
@@ -149,19 +149,19 @@ export function Header() {
             )}
         >
             <Container>
-                <div className="flex h-17 items-center gap-2 sm:gap-3">
+                <div className="flex h-[var(--header-h)] items-center gap-1 sm:gap-2 lg:gap-3">
                     <button
                         type="button"
                         onClick={() => setMobileOpen((value) => !value)}
                         aria-label={mobileOpen ? t("nav.closeMenu") : t("nav.openMenu")}
                         aria-expanded={mobileOpen}
                         aria-controls="mobile-navigation"
-                        className="-ml-2 inline-flex size-10 items-center justify-center rounded-lg text-ink-600 transition-colors hover:bg-ink-100 hover:text-ink-900 md:hidden"
+                        className="touch-target -ml-2 inline-flex size-10 shrink-0 items-center justify-center rounded-lg text-ink-600 transition-colors hover:bg-ink-100 hover:text-ink-900 lg:hidden"
                     >
                         {mobileOpen ? <X className="size-5" /> : <Menu className="size-5" />}
                     </button>
 
-                    <Logo />
+                    <Logo className="min-w-0 shrink py-2" />
 
                     <nav
                         aria-label={t("nav.mainLabel")}
@@ -188,15 +188,15 @@ export function Header() {
                         it optically centred whatever the nav happens to contain.
                     */}
                     {isAuthenticated ? (
-                        <HeaderSearch className="mx-auto hidden w-full max-w-sm xl:block" />
+                        <HeaderSearch className="mx-auto hidden w-full min-w-0 max-w-sm xl:block" />
                     ) : null}
 
-                    <div className="ml-auto flex items-center gap-0.5 sm:gap-1">
+                    <div className="ml-auto flex shrink-0 items-center gap-0.5 sm:gap-1">
                         {isAuthenticated ? (
                             <Link
                                 href="/search"
                                 aria-label={t("nav.search")}
-                                className="inline-flex size-9.5 items-center justify-center rounded-lg text-ink-600 transition-colors hover:bg-ink-100 hover:text-ink-900 xl:hidden"
+                                className="touch-target inline-flex size-9.5 shrink-0 items-center justify-center rounded-lg text-ink-600 transition-colors hover:bg-ink-100 hover:text-ink-900 xl:hidden"
                             >
                                 <Search className="size-5" />
                             </Link>
@@ -240,7 +240,7 @@ export function Header() {
                         tabIndex={-1}
                         onClick={() => setMobileOpen(false)}
                         className={cn(
-                            "fixed inset-x-0 bottom-0 top-17 -z-10 cursor-default bg-scrim/45 backdrop-blur-sm md:hidden",
+                            "fixed inset-x-0 bottom-0 top-[var(--header-h)] -z-10 cursor-default bg-scrim/45 backdrop-blur-sm lg:hidden",
                             drawerClosing
                                 ? "animate-fade-out pointer-events-none"
                                 : "animate-fade",
@@ -249,7 +249,7 @@ export function Header() {
                     <div
                         id="mobile-navigation"
                         className={cn(
-                            "border-t border-ink-200 bg-surface lg:hidden",
+                            "max-h-[calc(100dvh-var(--header-h))] overflow-y-auto overscroll-contain border-t border-ink-200 bg-surface lg:hidden",
                             drawerClosing
                                 ? "animate-slide-up pointer-events-none"
                                 : "animate-slide-down",
@@ -270,7 +270,7 @@ export function Header() {
                                         href={link.href}
                                         aria-current={isActive(link.href) ? "page" : undefined}
                                         className={cn(
-                                            "rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                                            "touch-target-h flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
                                             isActive(link.href) ? NAV_ACTIVE : "text-ink-700 hover:bg-ink-100",
                                         )}
                                     >
@@ -280,36 +280,43 @@ export function Header() {
                                 <Link
                                     href="/wishlist"
                                     className={cn(
-                                        "flex items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                                        "touch-target-h flex items-center justify-between gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
                                         isActive("/wishlist")
                                             ? NAV_ACTIVE
                                             : "text-ink-700 hover:bg-ink-100",
                                     )}
                                 >
-                                    <span className="flex items-center gap-2.5">
-                                        <Heart className="size-4" aria-hidden />
+                                    <span className="flex min-w-0 items-center gap-2.5 truncate">
+                                        <Heart className="size-4 shrink-0" aria-hidden />
                                         {t("nav.wishlist")}
                                     </span>
                                     {wishlistCount > 0 ? (
-                                        <span className="rounded-md bg-brand-soft px-1.5 py-0.5 text-xs font-semibold tabular-nums text-link">
+                                        <span className="shrink-0 rounded-md bg-brand-soft px-1.5 py-0.5 text-xs font-semibold tabular-nums text-link">
                                             {wishlistCount}
                                         </span>
                                     ) : null}
                                 </Link>
                             </nav>
 
-                            <div className="mt-3 space-y-3 border-t border-ink-200 pt-3">
-                                <div className="flex items-center justify-between gap-3">
-                                    <span className="text-xs font-medium uppercase tracking-[0.12em] text-ink-500">
+                            {/*
+                                Label above control rather than beside it. The theme
+                                control carries three written labels — side by side with
+                                its own label it needs ~350px, which a 320px phone does
+                                not have. Stacked, each option also gets a third of the
+                                row instead of a sliver.
+                            */}
+                            <div className="mt-3 space-y-4 border-t border-ink-200 pt-4 sm:space-y-3">
+                                <div className="space-y-2 sm:flex sm:items-center sm:justify-between sm:gap-3 sm:space-y-0">
+                                    <span className="block text-xs font-medium uppercase tracking-[0.12em] text-ink-500">
                                         {t("language.label")}
                                     </span>
-                                    <LanguageSegmentedControl />
+                                    <LanguageSegmentedControl className="flex w-full sm:w-auto" />
                                 </div>
-                                <div className="flex items-center justify-between gap-3">
-                                    <span className="text-xs font-medium uppercase tracking-[0.12em] text-ink-500">
+                                <div className="space-y-2 sm:flex sm:items-center sm:justify-between sm:gap-3 sm:space-y-0">
+                                    <span className="block text-xs font-medium uppercase tracking-[0.12em] text-ink-500">
                                         {t("theme.label")}
                                     </span>
-                                    <ThemeSegmentedControl />
+                                    <ThemeSegmentedControl className="flex w-full sm:w-auto" />
                                 </div>
                             </div>
                         </Container>

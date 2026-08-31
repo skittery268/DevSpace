@@ -218,9 +218,9 @@ export function CategoryFormDialog({
                 title={t("categoryForm.allowedAttributes")}
                 description={t("categoryForm.allowedAttributesBody")}
             >
-                <div className="flex gap-2">
+                <div className="flex flex-wrap items-start gap-2">
                     <Input
-                        wrapperClassName="flex-1"
+                        wrapperClassName="min-w-40 flex-1"
                         placeholder={t("categoryForm.attributePlaceholder")}
                         value={attributeDraft}
                         onChange={(event) => setAttributeDraft(event.target.value)}
@@ -233,7 +233,7 @@ export function CategoryFormDialog({
                         }}
                         aria-label={t("categoryForm.newAttributeName")}
                     />
-                    <Button variant="outline" onClick={addAttribute} className="h-11">
+                    <Button variant="outline" onClick={addAttribute} className="h-11 shrink-0">
                         <Plus className="size-4" />
                         {t("common.add")}
                     </Button>
@@ -244,16 +244,16 @@ export function CategoryFormDialog({
                         {allowedAttributes.map((attribute) => (
                             <span
                                 key={attribute}
-                                className="inline-flex items-center gap-1 rounded-full bg-brand-soft py-0.5 pl-2.5 pr-1 text-xs font-medium text-link ring-1 ring-inset ring-brand-line"
+                                className="inline-flex max-w-full items-center gap-1 rounded-full bg-brand-soft py-0.5 pl-2.5 pr-1 text-xs font-medium text-link ring-1 ring-inset ring-brand-line"
                             >
-                                {attribute}
+                                <span className="min-w-0 truncate">{attribute}</span>
                                 <button
                                     type="button"
                                     onClick={() => removeAttribute(attribute)}
                                     aria-label={t("categoryForm.removeAttribute", {
                                         name: attribute,
                                     })}
-                                    className="rounded-full p-0.5 transition-colors hover:bg-brand-soft-hover"
+                                    className="inline-flex size-5 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-brand-soft-hover"
                                 >
                                     <X className="size-3" />
                                 </button>

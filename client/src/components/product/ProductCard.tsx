@@ -85,12 +85,12 @@ export function ProductCard({
                     {product.category ? (
                         <Link
                             href={`/categories/${product.category.id}`}
-                            className="relative z-10 truncate text-[0.6875rem] font-semibold uppercase tracking-[0.1em] text-ink-400 transition-colors hover:text-link"
+                            className="relative z-10 min-w-0 truncate py-1 text-[0.6875rem] font-semibold uppercase tracking-[0.1em] text-ink-400 transition-colors hover:text-link"
                         >
                             {product.category.name}
                         </Link>
                     ) : (
-                        <span className="truncate text-[0.6875rem] font-semibold uppercase tracking-[0.1em] text-ink-400">
+                        <span className="min-w-0 truncate py-1 text-[0.6875rem] font-semibold uppercase tracking-[0.1em] text-ink-400">
                             {t("common.uncategorized")}
                         </span>
                     )}
@@ -106,7 +106,10 @@ export function ProductCard({
                     ) : null}
                 </div>
 
-                <h3 className="mt-1.5 text-sm font-medium leading-snug text-ink-900">
+                {/* `wrap-anywhere`, not just the inherited `break-word`: a title with
+                        no spaces sets this card's `min-content` width, and in a two-column
+                        grid that is what pushes the whole catalog past the viewport. */}
+                <h3 className="mt-1.5 wrap-anywhere text-sm font-medium leading-snug text-ink-900">
                     {/* The stretched link makes the whole card clickable while keeping the
                             category link, the wishlist button and add-to-cart reachable. */}
                     <Link
@@ -160,8 +163,16 @@ function ProductCardSkeleton() {
     );
 }
 
+/**
+ * The catalog track.
+ *
+ * `minmax(0,1fr)` throughout — `grid-cols-*` in Tailwind already resolves to
+ * that, which is what stops one long title from widening every column in the
+ * row. The fifth column arrives only above 1792px, where four cards would
+ * otherwise each be nearly 400px wide.
+ */
 const GRID =
-    "grid grid-cols-2 gap-x-4 gap-y-9 sm:gap-x-5 lg:grid-cols-3 lg:gap-x-6 xl:grid-cols-4";
+    "grid grid-cols-2 gap-x-4 gap-y-9 sm:gap-x-5 lg:grid-cols-3 lg:gap-x-6 xl:grid-cols-4 3xl:grid-cols-5";
 
 export function ProductGrid({
     products,

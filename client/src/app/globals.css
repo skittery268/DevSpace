@@ -132,16 +132,72 @@
       Display sizes for hero and section headings. Tighter tracking than the
       Tailwind defaults at these sizes — large type set at body tracking is the
       single clearest tell of a template.
+
+      Every step is fluid, so one class covers 320px to 2560px instead of the
+      `text-4xl sm:text-5xl lg:text-6xl xl:text-display` ladder these replace —
+      a ladder that snapped at three breakpoints, left every width in between
+      slightly wrong, and (because `display` was 3.25rem) actually *shrank* the
+      hero again above 1280px.
+
+      Each clamp keeps a `rem` term so the type still responds to a reader's
+      zoom, and lets the `vw` term do the responding. Both ends are pinned: a
+      phone never gets a headline it cannot fit, an ultra-wide never gets a
+      billboard.
     */
-    --text-display: 3.25rem;
-    --text-display--line-height: 1.04;
+    --text-display: clamp(2.25rem, 1.55rem + 3.2vw, 4.25rem);
+    --text-display--line-height: 1.06;
     --text-display--letter-spacing: -0.035em;
     --text-display--font-weight: 600;
 
-    --text-display-lg: 4.25rem;
-    --text-display-lg--line-height: 1;
+    --text-display-lg: clamp(2.75rem, 1.6rem + 5.75vw, 4.25rem);
+    --text-display-lg--line-height: 1.02;
     --text-display-lg--letter-spacing: -0.04em;
     --text-display-lg--font-weight: 600;
+
+    /* Section headings and page titles, on the same fluid principle. */
+    --text-title: clamp(1.5rem, 1.24rem + 1.3vw, 1.875rem);
+    --text-title--line-height: 1.15;
+    --text-title--letter-spacing: -0.03em;
+    --text-title--font-weight: 600;
+
+    --text-subtitle: clamp(1.375rem, 1.2rem + 0.85vw, 1.75rem);
+    --text-subtitle--line-height: 1.2;
+    --text-subtitle--letter-spacing: -0.03em;
+    --text-subtitle--font-weight: 600;
+
+    /* ------------------------------------------------------------- layout */
+    /*
+      One extra breakpoint above Tailwind's defaults. `2xl` (1536px) is where
+      the shell stops growing; `3xl` is where an ultra-wide display gets its
+      extra catalog column instead of two ever-wider gutters.
+    */
+    --breakpoint-3xl: 112rem; /* 1792px */
+
+    /*
+      The measure the page shell is allowed to reach, as one token rather than
+      a `max-w-*` repeated per page. It grows in two steps so 1280px stays the
+      familiar desktop layout and only genuinely wide displays get more.
+    */
+    --shell-max: 80rem; /* 1280px */
+
+    /*
+      Gutters. Fluid between the phone and the tablet, then fixed — a gutter
+      that keeps growing with the viewport eats the content on a wide screen.
+    */
+    --shell-gutter: clamp(1rem, 0.4rem + 1.85vw, 2rem);
+
+    /*
+      The header's height, as a token rather than the `h-17` / `top-17` pair
+      that used to have to agree by hand. The mobile drawer and the sticky
+      offsets all measure against it.
+    */
+    --header-h: 4.25rem;
+
+    /*
+      The admin rail. One token instead of a `SIDEBAR_WIDTH` constant, a
+      `w-[17rem]` and a `lg:pl-[17rem]` that all had to be kept in step by hand.
+    */
+    --admin-rail: 17rem;
 
     /* --------------------------------------------------------------- easing */
     --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
@@ -257,10 +313,71 @@ body {
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    /*
+      The safety net for user-supplied strings.
+
+      Everything on this site is typed by somebody: a product title with no
+      spaces, a pasted tracking URL, an email address at a long domain. A word
+      wider than its column is the single most common cause of a page that
+      scrolls sideways on a phone, and `break-word` inherits, so declaring it
+      once here covers every element instead of every component remembering.
+
+      `break-word` rather than `anywhere` deliberately: it breaks a word only
+      when the word cannot fit on a line of its own, and it leaves intrinsic
+      (`min-content`) sizing untouched — so a button or a badge is still
+      measured by its longest word and never collapses to one letter per line.
+      The places that also need the *intrinsic* size to give way ask for
+      `wrap-anywhere` explicitly.
+    */
+    overflow-wrap: break-word;
     /* Token swaps would otherwise repaint the whole page instantly on toggle. */
     transition:
         background-color 0.25s var(--ease-out-soft),
         color 0.25s var(--ease-out-soft);
+}
+
+/*
+  Form controls at 16px on a phone.
+
+  Mobile Safari zooms the viewport whenever a focused control is set below
+  16px, and it never zooms back out — the page is left scrolled sideways and
+  the header is off screen. The controls are `text-sm` by design at every
+  larger size, so the floor is applied only where the zoom exists.
+
+  Unlayered, so it outranks the `text-sm` on the control itself: a utility
+  lives in Tailwind's `utilities` layer, and unlayered rules beat layered ones
+  whatever their specificity.
+*/
+@media (max-width: 639px) {
+    input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+    select,
+    textarea {
+        font-size: 16px;
+    }
+}
+
+/*
+  Touch targets.
+
+  A finger needs roughly 44px, and the controls the design paints at 34-38px
+  are exactly the ones it is hardest to hit. Rather than auditing every button,
+  the floor is applied through two marker classes the components opt into.
+
+  The query is `coarse pointer OR narrow viewport`, not `coarse` alone. A
+  desktop browser at 380px wide reports a fine pointer, so a `coarse`-only rule
+  is invisible to responsive testing *and* to a laptop user with a narrow
+  window; and 44px controls cost a mouse user nothing. `:where()` keeps the
+  specificity at zero so a component can still override a single case.
+*/
+@media (pointer: coarse), (max-width: 639px) {
+    :where(.touch-target) {
+        min-height: 2.75rem;
+        min-width: 2.75rem;
+    }
+
+    :where(.touch-target-h) {
+        min-height: 2.75rem;
+    }
 }
 
 /* Focus ring: one definition, so every interactive element matches. */
@@ -286,6 +403,64 @@ input[type="number"] {
 }
 
 /* ---------------------------------------------------------------- utilities */
+
+/**
+ * `truncate`, with the `min-width` it always needed.
+ *
+ * Tailwind's `truncate` is `overflow:hidden` + `text-overflow:ellipsis` +
+ * `white-space:nowrap`. Inside a flex or grid item that is a trap: an item's
+ * `min-width` defaults to `auto`, which resolves to its `min-content` size, and
+ * the `min-content` size of text that may not wrap is *the whole string*. The
+ * item therefore refuses to shrink, the ellipsis never appears, and the track
+ * blows out — which is exactly how one long category name pushed the admin
+ * dashboard 900px past a phone's viewport.
+ *
+ * The fix is `min-width: 0`, and every call site was expected to remember it.
+ * Declaring it here instead makes the utility do what its name promises
+ * wherever it lands. It is inert outside flex and grid: a block box in normal
+ * flow already resolves `min-width: auto` to zero.
+ */
+@utility truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+}
+
+/**
+ * The page shell: one container, one measure, one set of gutters.
+ *
+ * Replaces `mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8` repeated per page.
+ * The gutter is fluid (see `--shell-gutter`) so it grows smoothly from 16px on
+ * a 320px phone to 32px on a tablet rather than jumping at two breakpoints, and
+ * the measure widens once above 1536px so an ultra-wide display gets content
+ * instead of a 1280px ribbon between two enormous margins.
+ */
+@utility shell {
+    margin-inline: auto;
+    width: 100%;
+    max-width: var(--shell-max);
+    padding-inline: var(--shell-gutter);
+
+    @variant 2xl {
+        max-width: 88rem; /* 1408px */
+    }
+
+    @variant 3xl {
+        max-width: 96rem; /* 1536px */
+    }
+}
+
+/**
+ * The vertical rhythm of a page inside the shell.
+ *
+ * Fluid rather than a flat `py-10`: 40px of dead space above the title is a
+ * quarter of a 320px phone's first screen, and 40px is thin at 2560px. One
+ * utility so the pages cannot drift apart.
+ */
+@utility py-page {
+    padding-block: clamp(1.75rem, 1.2rem + 1.7vw, 3rem);
+}
 
 @utility elev-1 {
     box-shadow: var(--elev-1);

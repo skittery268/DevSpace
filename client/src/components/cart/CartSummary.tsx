@@ -17,7 +17,7 @@ export function CartSummary() {
     const { isAuthenticated } = useAuth();
 
     return (
-        <Card className="lg:sticky lg:top-24">
+        <Card className="lg:sticky lg:top-[calc(var(--header-h)+1.5rem)]">
             <CardHeader title={t("cart.orderSummary")} />
 
             <CardBody className="space-y-3 text-sm">

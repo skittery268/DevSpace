@@ -110,7 +110,7 @@ export function SearchView() {
             <div
                 role="tablist"
                 aria-label={t("search.scope")}
-                className="mb-6 flex gap-1 border-b border-ink-200"
+                className="scrollbar-thin mb-6 flex gap-1 overflow-x-auto border-b border-ink-200"
             >
                 {TABS.map(({ id, labelKey }) => (
                     <button
@@ -120,7 +120,7 @@ export function SearchView() {
                         aria-selected={tab === id}
                         onClick={() => selectTab(id)}
                         className={cn(
-                            "-mb-px border-b-2 px-4 py-3 text-sm font-medium transition-colors duration-200",
+                            "-mb-px shrink-0 whitespace-nowrap border-b-2 px-4 py-3 text-sm font-medium transition-colors duration-200",
                             tab === id
                                 ? "border-brand-500 text-ink-900"
                                 : "border-transparent text-ink-500 hover:border-ink-300 hover:text-ink-800",

@@ -70,10 +70,10 @@ export function ReviewSection({ productId }: { productId: string }) {
 
             {loaded.length > 0 ? (
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-ink-200 bg-ink-100 px-5 py-4">
-                    <span className="text-3xl font-semibold tracking-tight tabular-nums text-ink-900">
+                    <span className="shrink-0 text-3xl font-semibold tracking-tight tabular-nums text-ink-900">
                         {average.toFixed(1)}
                     </span>
-                    <div>
+                    <div className="min-w-0">
                         <RatingStars value={average} size="md" />
                         <p className="mt-1 text-xs text-ink-500">
                             {isCompleteAverage

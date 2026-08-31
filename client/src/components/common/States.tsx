@@ -127,7 +127,7 @@ export function SectionHeading({
                         {eyebrow}
                     </p>
                 ) : null}
-                <h2 className="text-2xl font-semibold tracking-[-0.03em] text-ink-900 sm:text-[1.75rem]">
+                <h2 className="text-subtitle wrap-anywhere text-ink-900">
                     {title}
                 </h2>
                 {description ? (

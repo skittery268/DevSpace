@@ -72,11 +72,11 @@ export function ImagePicker({
                 </p>
             ) : null}
 
-            <div className="flex flex-wrap gap-2">
+            <div className="grid grid-cols-[repeat(auto-fill,minmax(5rem,1fr))] gap-2 sm:grid-cols-[repeat(auto-fill,minmax(6rem,1fr))]">
                 {previews.map(({ file, url }, index) => (
                     <div
                         key={`${file.name}-${index}`}
-                        className="relative size-24 overflow-hidden rounded-lg border border-ink-200 bg-ink-100"
+                        className="relative aspect-square w-full overflow-hidden rounded-lg border border-ink-200 bg-ink-100"
                     >
                         {/* Blob previews never go through the image optimizer. */}
                         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -89,9 +89,9 @@ export function ImagePicker({
                             type="button"
                             aria-label={t("imagePicker.remove", { name: file.name })}
                             onClick={() => onChange(files.filter((_, i) => i !== index))}
-                            className="absolute right-1 top-1 rounded-full bg-scrim/70 p-1 text-white transition-colors hover:bg-scrim"
+                            className="absolute right-1 top-1 inline-flex size-7 items-center justify-center rounded-full bg-scrim/70 text-white transition-colors hover:bg-scrim"
                         >
-                            <X className="size-3" />
+                            <X className="size-3.5" />
                         </button>
                     </div>
                 ))}
@@ -100,7 +100,7 @@ export function ImagePicker({
                     <button
                         type="button"
                         onClick={() => inputRef.current?.click()}
-                        className="flex size-24 flex-col items-center justify-center gap-1 rounded-lg border-2 border-dashed border-ink-300 text-ink-500 transition-colors hover:border-brand-400 hover:text-link"
+                        className="flex aspect-square w-full flex-col items-center justify-center gap-1 rounded-lg border-2 border-dashed border-ink-300 text-ink-500 transition-colors hover:border-brand-400 hover:text-link"
                     >
                         <ImagePlus className="size-5" />
                         <span className="text-xs">{t("imagePicker.add")}</span>

@@ -21,11 +21,11 @@ export default async function NotFound() {
     return (
         <div className="relative isolate overflow-hidden">
             <AuroraBackdrop />
-            <Container className="flex min-h-[60vh] flex-col items-center justify-center py-20 text-center">
-                <p className="text-brand-gradient text-7xl font-semibold tracking-tight sm:text-8xl">
+            <Container className="flex min-h-[60dvh] flex-col items-center justify-center py-20 text-center">
+                <p className="text-brand-gradient text-[clamp(3.5rem,2.6rem+4.5vw,6rem)] font-semibold leading-none tracking-tight">
                     {t("states.notFoundCode")}
                 </p>
-                <h1 className="mt-4 text-2xl font-semibold tracking-tight text-ink-900 sm:text-3xl">
+                <h1 className="text-title mt-4 text-ink-900">
                     {t("states.notFoundTitle")}
                 </h1>
                 <p className="mt-3 max-w-md text-sm leading-relaxed text-ink-500">

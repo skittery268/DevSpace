@@ -83,7 +83,7 @@ export function CheckoutView() {
 
     if (!hydrated) {
         return (
-            <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
                 <Skeleton className="h-96 w-full" />
                 <Skeleton className="h-64 w-full" />
             </div>
@@ -106,7 +106,7 @@ export function CheckoutView() {
     return (
         <form
             onSubmit={onSubmit}
-            className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-start"
+            className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-start"
             noValidate
         >
             <Card>
@@ -117,7 +117,7 @@ export function CheckoutView() {
                 <CardBody className="space-y-4">
                     {formError ? <Alert tone="error">{formError}</Alert> : null}
 
-                    <div className="grid gap-4 sm:grid-cols-2">
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <Input
                             label={t("checkout.fullName")}
                             autoComplete="name"
@@ -169,7 +169,7 @@ export function CheckoutView() {
                 </CardBody>
             </Card>
 
-            <Card className="lg:sticky lg:top-20">
+            <Card className="lg:sticky lg:top-[calc(var(--header-h)+1.5rem)]">
                 <CardHeader title={t("checkout.order")} />
                 <CardBody className="space-y-3 text-sm">
                     <ul className="space-y-2">

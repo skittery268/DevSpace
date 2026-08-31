@@ -35,7 +35,10 @@ export function Badge({
     return (
         <span
             className={cn(
-                "inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[0.6875rem] font-semibold tracking-[0.01em] ring-1 ring-inset",
+                // `max-w-full` and a word-breaking label: badges carry
+                // admin-typed attribute names and category labels, and one long
+                // token would otherwise set the width of whatever row it lands in.
+                "inline-flex max-w-full items-center gap-1 rounded-md px-2 py-0.5 text-[0.6875rem] font-semibold tracking-[0.01em] wrap-anywhere ring-1 ring-inset",
                 TONES[tone],
                 className,
             )}

@@ -144,7 +144,7 @@ export default async function HomePage() {
             <section className="bg-surface">
                 <Container>
                     <Reveal>
-                        <ul className="grid divide-y divide-ink-200 sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+                        <ul className="grid grid-cols-1 divide-y divide-ink-200 sm:grid-cols-3 sm:divide-x sm:divide-y-0">
                             {HIGHLIGHTS.map(({ icon: Icon, titleKey, bodyKey }, index) => (
                                 <li key={titleKey} className={cnHighlight(index)}>
                                     <div className="flex size-9 items-center justify-center rounded-lg bg-brand-soft text-link ring-1 ring-inset ring-brand-line/60">
@@ -205,7 +205,7 @@ export default async function HomePage() {
                         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-200">
                             {t("home.ctaEyebrow")}
                         </p>
-                        <h2 className="mx-auto mt-4 max-w-2xl text-3xl font-semibold tracking-[-0.03em] text-white sm:text-4xl">
+                        <h2 className="mx-auto mt-4 max-w-2xl text-[clamp(1.75rem,1.35rem+2vw,2.5rem)] font-semibold leading-[1.1] tracking-[-0.03em] text-white">
                             {t("home.ctaTitle")}
                         </h2>
                         <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-white/70 sm:text-base">

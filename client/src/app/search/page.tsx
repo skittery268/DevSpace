@@ -22,7 +22,7 @@ export default async function SearchPage() {
 
     return (
         <RequireAuth>
-            <Container className="py-10">
+            <Container className="py-page">
                 <PageHeader
                     title={t("search.title")}
                     description={t("search.subtitle")}

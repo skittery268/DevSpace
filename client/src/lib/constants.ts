@@ -43,3 +43,13 @@ export const ORDER_STATUS_TONES: Record<
 
 /** TOTP codes and password-reset codes are both exactly six digits. */
 export const SIX_DIGIT_CODE = /^\d{6}$/;
+
+/**
+ * Email verification is temporarily switched off.
+ *
+ * `register` on the server creates the account with `isVerified: true` and skips
+ * the verification mail, so sign-in works straight away. The post-registration
+ * "check your inbox" screen is kept intact behind this flag — flip it back to
+ * `true` at the same time as the server change is reverted.
+ */
+export const EMAIL_VERIFICATION_ENABLED: boolean = false;

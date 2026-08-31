@@ -29,6 +29,10 @@ function LoginFormInner() {
     const [formError, setFormError] = useState<string | null>(null);
 
     const next = searchParams.get("next");
+    // Set by the register form while email verification is switched off — the
+    // sign-up screen redirects straight here, so this is the only confirmation
+    // that the account was actually created.
+    const justRegistered = searchParams.get("registered") === "1";
 
     // Rebuilt only when the language changes, so the messages a rule produces
     // follow the switcher without the form remounting.
@@ -76,6 +80,10 @@ function LoginFormInner() {
             */}
             <form onSubmit={onSubmit} className="mt-8 flex flex-col gap-4" noValidate>
                 {formError ? <Alert tone="error">{formError}</Alert> : null}
+
+                {justRegistered && !formError ? (
+                    <Alert tone="success">{t("auth.registeredNotice")}</Alert>
+                ) : null}
 
                 <Input
                     type="email"

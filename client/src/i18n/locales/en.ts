@@ -248,6 +248,7 @@ export const en = {
         registerBody:
             "Buy, review and — once an administrator grants the role — sell on {{app}}.",
         registerFooter: "Already registered?",
+        registeredNotice: "Account created — sign in with your new credentials.",
         fullNameHint: "At least 5 characters.",
         passwordHint: "At least 8 characters.",
 

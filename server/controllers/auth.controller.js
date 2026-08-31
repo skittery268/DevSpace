@@ -52,9 +52,10 @@ const register = catchAsync(async (req, res, next) => {
         return next(new AppError("User with this email already exists!", 400));
     };
 
-    const user = await User.create({ fullname, email, password });
+    // account verification is temporarily disabled
+    const user = await User.create({ fullname, email, password, isVerified: true });
 
-    await user.sendVerificationToken();
+    // await user.sendVerificationToken();
 
     res.status(201).json({
         status: "success",

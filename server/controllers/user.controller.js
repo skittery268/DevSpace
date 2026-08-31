@@ -143,9 +143,11 @@ const editUserEmailVerify = catchAsync(async (req, res, next) => {
     };
 
     user.email = newEmail;
-    user.isVerified = false;
 
-    await user.sendVerificationToken();
+    // account verification is temporarily disabled
+    // user.isVerified = false;
+
+    // await user.sendVerificationToken();
 
     user.changeEmailExpires = undefined;
     user.changeEmailCode = undefined;

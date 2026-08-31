@@ -245,6 +245,7 @@ export const ru: Translation = {
         registerBody:
             "Покупайте, оставляйте отзывы, а после выдачи роли администратором — продавайте на {{app}}.",
         registerFooter: "Уже зарегистрированы?",
+        registeredNotice: "Аккаунт создан — войдите с новыми данными.",
         fullNameHint: "Не менее 5 символов.",
         passwordHint: "Не менее 8 символов.",
 

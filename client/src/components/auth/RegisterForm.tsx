@@ -1,6 +1,7 @@
 "use client";
 
 import { Lock, Mail, MailCheck, User } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Trans, useTranslation } from "react-i18next";
@@ -13,7 +14,7 @@ import { Alert } from "@/components/ui/Alert";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { Input, PasswordInput } from "@/components/ui/Field";
 import { useRegister } from "@/features/auth/useAuthMutations";
-import { APP_NAME } from "@/lib/constants";
+import { APP_NAME, EMAIL_VERIFICATION_ENABLED } from "@/lib/constants";
 import { applyServerErrors } from "@/lib/form-errors";
 import {
     createRegisterSchema,
@@ -22,6 +23,7 @@ import {
 
 function RegisterFormInner() {
     const { t } = useTranslation();
+    const router = useRouter();
     const registerUser = useRegister();
     const [formError, setFormError] = useState<string | null>(null);
     const [registeredEmail, setRegisteredEmail] = useState<string | null>(null);
@@ -41,6 +43,15 @@ function RegisterFormInner() {
 
         try {
             await registerUser.mutateAsync(values);
+
+            // Verification is off for now: the server marks the account verified
+            // as it creates it, so there is no inbox to wait on and the screen
+            // below would only send people looking for a mail that never comes.
+            if (!EMAIL_VERIFICATION_ENABLED) {
+                router.push("/login?registered=1");
+                return;
+            }
+
             // Registration issues no session cookie: the account stays unusable
             // until the emailed verification link is opened.
             setRegisteredEmail(values.email);
@@ -51,7 +62,7 @@ function RegisterFormInner() {
         }
     });
 
-    if (registeredEmail) {
+    if (EMAIL_VERIFICATION_ENABLED && registeredEmail) {
         return (
             <AuthSplit variant="signUp">
                 <AuthHeading

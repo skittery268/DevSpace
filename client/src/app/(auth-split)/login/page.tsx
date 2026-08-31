@@ -4,10 +4,14 @@ import { Suspense } from "react";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { Spinner } from "@/components/ui/Spinner";
 import { getServerTranslation } from "@/i18n/server";
+import { NOINDEX } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
     const { t } = await getServerTranslation();
-    return { title: t("auth.signIn") };
+    return {
+        robots: NOINDEX,
+        title: t("auth.signIn"),
+    };
 }
 
 export default function LoginPage() {

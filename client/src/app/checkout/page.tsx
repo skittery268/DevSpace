@@ -4,10 +4,14 @@ import { CheckoutView } from "@/components/checkout/CheckoutView";
 import { RequireAuth } from "@/components/common/RouteGuard";
 import { Container, PageHeader } from "@/components/common/Container";
 import { getServerTranslation } from "@/i18n/server";
+import { NOINDEX } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
     const { t } = await getServerTranslation();
-    return { title: t("checkout.title") };
+    return {
+        robots: NOINDEX,
+        title: t("checkout.title"),
+    };
 }
 
 export default async function CheckoutPage() {

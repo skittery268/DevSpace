@@ -1,4 +1,10 @@
+import type { Metadata } from "next";
+
 import { RequireRole } from "@/components/common/RouteGuard";
+import { NOINDEX_NOFOLLOW } from "@/lib/seo";
+
+/** Inherited by every screen in the seller area. */
+export const metadata: Metadata = { robots: NOINDEX_NOFOLLOW };
 
 /**
  * Mirrors `allowedTo("seller", "admin", "moderator")` on `/api/v1/seller/*`.

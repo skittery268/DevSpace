@@ -132,6 +132,17 @@ export const en = {
         stripeNote: "Payments are processed by Stripe Checkout.",
     },
 
+    /** Strings that exist only as meta tags, never rendered on a page. */
+    seo: {
+        ogImageAlt: "The {{app}} wordmark on a dark emerald background",
+        pageSuffix: "Page {{page}}",
+        productTitleWithCategory: "{{title}} — {{category}}",
+        productDescriptionFallback:
+            "{{title}} on {{app}} — price, availability and seller details.",
+        categoryDescriptionFallback:
+            "Browse the products listed in {{name}} on {{app}}.",
+    },
+
     theme: {
         label: "Theme",
         colourTheme: "Colour theme",

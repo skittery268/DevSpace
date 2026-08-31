@@ -4,10 +4,14 @@ import { Suspense } from "react";
 import { ResetPasswordForm } from "@/components/auth/ResetPasswordForm";
 import { Spinner } from "@/components/ui/Spinner";
 import { getServerTranslation } from "@/i18n/server";
+import { NOINDEX } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
     const { t } = await getServerTranslation();
-    return { title: t("auth.resetTitle") };
+    return {
+        robots: NOINDEX,
+        title: t("auth.resetTitle"),
+    };
 }
 
 export default function ResetPasswordPage() {

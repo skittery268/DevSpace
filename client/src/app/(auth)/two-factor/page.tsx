@@ -4,10 +4,14 @@ import { Suspense } from "react";
 import { TwoFactorLoginForm } from "@/components/auth/TwoFactorLoginForm";
 import { Spinner } from "@/components/ui/Spinner";
 import { getServerTranslation } from "@/i18n/server";
+import { NOINDEX } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
     const { t } = await getServerTranslation();
-    return { title: t("twoFactor.title") };
+    return {
+        robots: NOINDEX,
+        title: t("twoFactor.title"),
+    };
 }
 
 export default function TwoFactorPage() {

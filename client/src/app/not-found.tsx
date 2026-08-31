@@ -1,6 +1,19 @@
+import type { Metadata } from "next";
+
 import { AuroraBackdrop, Container } from "@/components/common/Container";
 import { ButtonLink } from "@/components/ui/Button";
 import { getServerTranslation } from "@/i18n/server";
+import { NOINDEX } from "@/lib/seo";
+
+/**
+ * A 404 already carries the status code that keeps it out of an index, but the
+ * page is also reachable through client navigation, where no status is sent.
+ * `follow` stays on because the two links on it go to the catalog.
+ */
+export async function generateMetadata(): Promise<Metadata> {
+    const { t } = await getServerTranslation();
+    return { title: t("states.notFoundTitle"), robots: NOINDEX };
+}
 
 export default async function NotFound() {
     const { t } = await getServerTranslation();

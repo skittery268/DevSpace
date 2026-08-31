@@ -6,10 +6,14 @@ import { RequireAuth } from "@/components/common/RouteGuard";
 import { OrderList } from "@/components/order/OrderList";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { getServerTranslation } from "@/i18n/server";
+import { NOINDEX } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
     const { t } = await getServerTranslation();
-    return { title: t("orders.title") };
+    return {
+        robots: NOINDEX,
+        title: t("orders.title"),
+    };
 }
 
 export default async function OrdersPage() {

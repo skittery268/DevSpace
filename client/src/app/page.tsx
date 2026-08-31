@@ -17,10 +17,17 @@ import {
     MostReviewedProducts,
 } from "@/components/home/HomeSections";
 import { Container } from "@/components/common/Container";
+import { JsonLd } from "@/components/seo/JsonLd";
 import { ButtonLink } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
 import { getServerTranslation } from "@/i18n/server";
 import { APP_NAME } from "@/lib/constants";
+import { INTL_LOCALES } from "@/i18n/config";
+import {
+    jsonLdGraph,
+    organizationSchema,
+    websiteSchema,
+} from "@/lib/structured-data";
 
 /**
  * Three claims the API can actually back. They run as a hairline-divided band
@@ -52,10 +59,23 @@ const HIGHLIGHTS = [
  * this tree in the new language without a reload.
  */
 export default async function HomePage() {
-    const { t } = await getServerTranslation();
+    const { t, locale } = await getServerTranslation();
 
     return (
         <>
+            {/*
+                The site-level graph, declared once on the page that represents
+                the site. No `potentialAction` sitelinks search box: every
+                `/search` endpoint sits behind `protect`, so the URL template
+                would answer 401 for exactly the visitors a search box is for.
+            */}
+            <JsonLd
+                data={jsonLdGraph(
+                    organizationSchema(t("home.heroLead")),
+                    websiteSchema(t("home.heroLead"), INTL_LOCALES[locale]),
+                )}
+            />
+
             {/* Google's callback bounces 2FA users back to "/" with a query flag. */}
             <Suspense fallback={null}>
                 <HomeTwoFactorRedirect />

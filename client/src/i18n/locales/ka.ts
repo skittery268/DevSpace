@@ -132,6 +132,16 @@ export const ka: Translation = {
         stripeNote: "გადახდებს ამუშავებს Stripe Checkout.",
     },
 
+    seo: {
+        ogImageAlt: "{{app}}-ის ლოგოტიპი მუქ ზურმუხტისფერ ფონზე",
+        pageSuffix: "გვერდი {{page}}",
+        productTitleWithCategory: "{{title}} — {{category}}",
+        productDescriptionFallback:
+            "{{title}} {{app}}-ზე — ფასი, მარაგი და გამყიდველის მონაცემები.",
+        categoryDescriptionFallback:
+            "იხილეთ პროდუქტები კატეგორიაში „{{name}}“ {{app}}-ზე.",
+    },
+
     theme: {
         label: "თემა",
         colourTheme: "ფერის თემა",

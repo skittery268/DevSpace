@@ -6,10 +6,14 @@ import { RequireAuth } from "@/components/common/RouteGuard";
 import { SearchView } from "@/components/search/SearchView";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { getServerTranslation } from "@/i18n/server";
+import { NOINDEX } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
     const { t } = await getServerTranslation();
-    return { title: t("search.title") };
+    return {
+        robots: NOINDEX,
+        title: t("search.title"),
+    };
 }
 
 /** All three search endpoints sit behind `protect`, so this page needs a session. */

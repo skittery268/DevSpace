@@ -4,10 +4,12 @@ import { Container, PageHeader } from "@/components/common/Container";
 import { WishlistView } from "@/components/wishlist/WishlistView";
 import { APP_NAME } from "@/lib/constants";
 import { getServerTranslation } from "@/i18n/server";
+import { NOINDEX } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
     const { t } = await getServerTranslation();
     return {
+        robots: NOINDEX,
         title: t("wishlist.title"),
         description: t("wishlist.metaDescription", { app: APP_NAME }),
     };

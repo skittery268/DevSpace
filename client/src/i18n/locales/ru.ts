@@ -131,6 +131,16 @@ export const ru: Translation = {
         stripeNote: "Платежи обрабатывает Stripe Checkout.",
     },
 
+    seo: {
+        ogImageAlt: "Логотип {{app}} на тёмно-изумрудном фоне",
+        pageSuffix: "Страница {{page}}",
+        productTitleWithCategory: "{{title}} — {{category}}",
+        productDescriptionFallback:
+            "{{title}} на {{app}} — цена, наличие и данные продавца.",
+        categoryDescriptionFallback:
+            "Товары в категории «{{name}}» на {{app}}.",
+    },
+
     theme: {
         label: "Тема",
         colourTheme: "Цветовая тема",

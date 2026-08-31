@@ -81,7 +81,7 @@ export function CartView() {
                     }
                 />
                 <CardBody className="py-0">
-                    <ul>
+                    <ul className="stagger">
                         {items.map((item) => (
                             <CartItemRow key={item.productId} item={item} />
                         ))}

@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState, type ReactNode } from "react"
 import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 
+import { usePresence } from "@/hooks/usePresence";
 import { cn } from "@/lib/utils";
 
 export type ModalSize = "sm" | "md" | "lg" | "xl";
@@ -53,6 +54,11 @@ export function Modal({
 }: ModalProps) {
     const { t } = useTranslation();
     const panelRef = useRef<HTMLDivElement>(null);
+
+    // Holds the overlay in the tree through its closing animation. Every other
+    // hook below still keys off `open`, which is the moment the dialog stops
+    // being a dialog — `present` only governs how long it is still painted.
+    const { present, closing } = usePresence(open);
 
     /**
      * The overlay is portalled to `<body>`, not rendered where the dialog is
@@ -121,23 +127,42 @@ export function Modal({
         const opener = document.activeElement as HTMLElement | null;
 
         document.addEventListener("keydown", onKeyDown);
-        const previousOverflow = document.body.style.overflow;
-        document.body.style.overflow = "hidden";
-
         panelRef.current?.focus();
 
         return () => {
             document.removeEventListener("keydown", onKeyDown);
-            document.body.style.overflow = previousOverflow;
             opener?.focus?.();
         };
     }, [open, container, requestClose, trapFocus]);
 
-    if (!open || !container) return null;
+    /**
+     * The scroll lock outlives the close by the length of the exit animation.
+     *
+     * It is deliberately not part of the effect above: releasing it the instant
+     * `open` flips would hand the scrollbar back while the panel is still on
+     * screen, and the page behind the backdrop would jump sideways mid-fade.
+     */
+    useEffect(() => {
+        if (!present || !container) return;
+
+        const previousOverflow = document.body.style.overflow;
+        document.body.style.overflow = "hidden";
+
+        return () => {
+            document.body.style.overflow = previousOverflow;
+        };
+    }, [present, container]);
+
+    if (!present || !container) return null;
 
     return createPortal(
         <div
-            className="animate-fade fixed inset-0 z-50 flex items-end justify-center bg-scrim/60 p-0 backdrop-blur-sm sm:items-center sm:p-4"
+            className={cn(
+                "fixed inset-0 z-50 flex items-end justify-center bg-scrim/60 p-0 backdrop-blur-sm sm:items-center sm:p-4",
+                // Inert on the way out, so a click aimed at whatever is being
+                // revealed cannot land on a dialog that is already dismissed.
+                closing ? "animate-fade-out pointer-events-none" : "animate-fade",
+            )}
             onMouseDown={(event) => {
                 if (event.target === event.currentTarget) requestClose();
             }}
@@ -152,7 +177,8 @@ export function Modal({
                 aria-busy={busy || undefined}
                 tabIndex={-1}
                 className={cn(
-                    "animate-scale-in flex max-h-[92vh] w-full flex-col overflow-hidden rounded-t-3xl border border-ink-200 bg-surface-2 elev-3 outline-none",
+                    "flex max-h-[92vh] w-full flex-col overflow-hidden rounded-t-3xl border border-ink-200 bg-surface-2 elev-3 outline-none",
+                    closing ? "animate-scale-out" : "animate-scale-in",
                     "sm:max-h-[90vh] sm:rounded-xl",
                     SIZES[size],
                     className,

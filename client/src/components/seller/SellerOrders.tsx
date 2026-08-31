@@ -121,7 +121,7 @@ export function SellerOrders() {
                         })}
                     </p>
 
-                    <div className="space-y-4">
+                    <div className="stagger space-y-4">
                         {orders.map((order) => (
                             <SellerOrderCard key={order.id} order={order} />
                         ))}

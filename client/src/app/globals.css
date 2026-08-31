@@ -474,6 +474,35 @@ input[type="number"] {
     }
 }
 
+/*
+  Exit halves of the three transitions that need one. A dialog, a drawer and a
+  menu are the only things in the app that *close* — everything else is
+  replaced by a navigation, which `PageTransition` already covers.
+
+  Deliberately shorter than the entry they mirror: an opening panel is showing
+  you something, a closing one is getting out of the way, and matching the two
+  durations makes dismissal feel sticky.
+*/
+@keyframes devspace-fade-out {
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes devspace-scale-out {
+    to {
+        opacity: 0;
+        transform: scale(0.97) translateY(4px);
+    }
+}
+
+@keyframes devspace-slide-up {
+    to {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+}
+
 @keyframes devspace-pop {
     0% {
         transform: scale(1);
@@ -548,6 +577,61 @@ input[type="number"] {
     animation: devspace-grow-x 0.7s var(--ease-out-soft) both;
 }
 
+@utility animate-fade-out {
+    animation: devspace-fade-out 0.16s var(--ease-out-soft) both;
+}
+
+@utility animate-scale-out {
+    animation: devspace-scale-out 0.16s var(--ease-out-soft) both;
+}
+
+@utility animate-slide-up {
+    animation: devspace-slide-up 0.16s var(--ease-out-soft) both;
+}
+
+/**
+ * Staggered entry for a grid or a list, as one class on the container.
+ *
+ * `nth-child` rather than an inline `--delay` per item: the delay is a property
+ * of the *position*, the container already knows it, and driving it from CSS
+ * keeps the cards plain server-rendered markup with nothing to hydrate.
+ *
+ * The ramp is capped at the eighth child. Past roughly two rows the stagger has
+ * made its point, and letting it keep climbing would leave the bottom of a long
+ * page waiting whole seconds to exist.
+ *
+ * `backwards`, not `both`: the fill has to end with the animation so the item's
+ * own `hover:-translate-y-1` is not permanently outranked by the animation's
+ * final `translateY(0)` — animated values beat author styles for as long as
+ * they are filled, which would silently kill every card lift in the grid.
+ */
+@utility stagger {
+    & > * {
+        animation: devspace-rise 0.42s var(--ease-out-soft) backwards;
+    }
+    & > *:nth-child(2) {
+        animation-delay: 40ms;
+    }
+    & > *:nth-child(3) {
+        animation-delay: 80ms;
+    }
+    & > *:nth-child(4) {
+        animation-delay: 120ms;
+    }
+    & > *:nth-child(5) {
+        animation-delay: 160ms;
+    }
+    & > *:nth-child(6) {
+        animation-delay: 200ms;
+    }
+    & > *:nth-child(7) {
+        animation-delay: 240ms;
+    }
+    & > *:nth-child(n + 8) {
+        animation-delay: 280ms;
+    }
+}
+
 /** Skeletons sweep instead of pulsing — it reads as "loading", not "disabled". */
 @utility skeleton-sheen {
     background-image: linear-gradient(
@@ -591,6 +675,15 @@ input[type="number"] {
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
         scroll-behavior: auto !important;
+        /*
+          The delays matter as much as the durations here. `stagger` holds a card
+          invisible (`backwards`) until its turn, and `[data-reveal]` waits out
+          `--reveal-delay` before it fades — collapsing only the durations would
+          leave both of them *timing out an invisible element*, which reads as a
+          page that loads in pieces rather than one that does not animate.
+        */
+        animation-delay: 0ms !important;
+        transition-delay: 0ms !important;
     }
 
     [data-reveal="pending"] {

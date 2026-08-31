@@ -18,6 +18,7 @@ import { Badge } from "@/components/ui/Badge";
 import { ButtonLink } from "@/components/ui/Button";
 import { useAuth } from "@/features/auth/useAuth";
 import { useLogout } from "@/features/auth/useAuthMutations";
+import { usePresence } from "@/hooks/usePresence";
 import { roleLabelKey } from "@/lib/constants";
 import { hasSellerArea, hasStaffArea } from "@/lib/permissions";
 import { cn, initialsOf } from "@/lib/utils";
@@ -28,6 +29,11 @@ export function UserMenu() {
     const logout = useLogout();
     const [open, setOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
+
+    // Kept in the tree while it scales back down. The hook is called before the
+    // loading and signed-out branches below return, which is what keeps the
+    // hook order stable across all three states this component can render.
+    const { present, closing } = usePresence(open);
 
     useEffect(() => {
         if (!open) return;
@@ -101,10 +107,13 @@ export function UserMenu() {
                 />
             </button>
 
-            {open ? (
+            {present ? (
                 <div
                     role="menu"
-                    className="animate-scale-in absolute right-0 z-50 mt-2 w-64 origin-top-right overflow-hidden rounded-xl border border-ink-200 bg-surface-2 elev-3"
+                    className={cn(
+                        "absolute right-0 z-50 mt-2 w-64 origin-top-right overflow-hidden rounded-xl border border-ink-200 bg-surface-2 elev-3",
+                        closing ? "animate-scale-out pointer-events-none" : "animate-scale-in",
+                    )}
                 >
                     <div className="border-b border-ink-200 bg-surface-3 px-4 py-3">
                         <p className="truncate text-sm font-semibold text-ink-900">

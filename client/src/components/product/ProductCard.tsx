@@ -172,7 +172,9 @@ export function ProductGrid({
     priorityCount?: number;
 }) {
     return (
-        <div className={GRID}>
+        // `stagger` is on the grid and not on the skeleton below it: a shimmer
+        // that also drifts upward is two loading signals for one wait.
+        <div className={cn(GRID, "stagger")}>
             {products.map((product, index) => (
                 <ProductCard
                     key={product.id}

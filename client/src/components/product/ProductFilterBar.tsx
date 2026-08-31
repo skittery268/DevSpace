@@ -104,7 +104,12 @@ export function ProductFilterBar({
                 id="product-filters"
                 className={cn(
                     "mt-4 grid gap-3 border-t border-ink-200 pt-4 sm:grid-cols-2 lg:grid-cols-4",
-                    expanded ? "grid" : "hidden sm:grid",
+                    // Opening fades the panel in; collapsing is instant, and stays
+                    // that way on purpose. This block sits in the flow, so an exit
+                    // animation would have to hold its height while everything
+                    // below waits — animating a layout property every frame is the
+                    // one thing a filter panel over a long grid must not do.
+                    expanded ? "animate-rise grid" : "hidden sm:grid",
                 )}
             >
                 <Select

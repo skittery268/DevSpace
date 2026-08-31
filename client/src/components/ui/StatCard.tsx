@@ -92,7 +92,10 @@ export function StatCardGrid({
     className?: string;
 }) {
     return (
-        <div className={cn("grid gap-4 sm:grid-cols-2 xl:grid-cols-4", className)}>
+        // Both dashboards open on this row, so the stagger lands here rather than
+        // in either console: the KPIs are the first thing on the screen and the
+        // one place a console can afford a moment of motion.
+        <div className={cn("stagger grid gap-4 sm:grid-cols-2 xl:grid-cols-4", className)}>
             {children}
         </div>
     );

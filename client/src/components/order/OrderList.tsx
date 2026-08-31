@@ -77,7 +77,7 @@ export function OrderList() {
                 · {t("common.pageOf", { page: data.page, pageCount: data.pageCount })}
             </p>
 
-            <div className="space-y-4">
+            <div className="stagger space-y-4">
                 {data.items.map((order) => (
                     <OrderCard key={order.id} order={order} />
                 ))}

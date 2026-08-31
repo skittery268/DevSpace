@@ -118,7 +118,7 @@ export function CategoryGrid({
     priorityCount?: number;
 }) {
     return (
-        <div className={GRID}>
+        <div className={cn(GRID, "stagger")}>
             {categories.map((category, index) => (
                 <CategoryCard
                     key={category.id}

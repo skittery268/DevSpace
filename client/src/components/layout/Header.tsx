@@ -18,6 +18,7 @@ import { Container } from "@/components/common/Container";
 import { useAuth } from "@/features/auth/useAuth";
 import { useCartItemCount } from "@/features/cart/useCart";
 import { useWishlistCount } from "@/features/wishlist/useWishlist";
+import { usePresence } from "@/hooks/usePresence";
 import { hasSellerArea, hasStaffArea } from "@/lib/permissions";
 import { cn } from "@/lib/utils";
 
@@ -94,6 +95,11 @@ export function Header() {
     const [drawerPath, setDrawerPath] = useState(pathname);
     const [scrolled, setScrolled] = useState(false);
 
+    // The drawer is the one piece of chrome a phone user opens and closes over
+    // and over, so it is the piece where an instant disappearance is most
+    // obviously wrong. It stays mounted long enough to slide back up.
+    const { present: drawerPresent, closing: drawerClosing } = usePresence(mobileOpen);
+
     // Any navigation closes the drawer, including one started from inside it.
     // Adjusting during render avoids the extra commit an effect would cause.
     if (drawerPath !== pathname) {
@@ -110,15 +116,17 @@ export function Header() {
         return () => window.removeEventListener("scroll", onScroll);
     }, []);
 
-    // A drawer that scrolls the page behind it feels broken on a phone.
+    // A drawer that scrolls the page behind it feels broken on a phone. Held
+    // until the drawer is actually gone, so the scrollbar does not snap back
+    // underneath one that is still sliding away.
     useEffect(() => {
-        if (!mobileOpen) return;
+        if (!drawerPresent) return;
         const previous = document.body.style.overflow;
         document.body.style.overflow = "hidden";
         return () => {
             document.body.style.overflow = previous;
         };
-    }, [mobileOpen]);
+    }, [drawerPresent]);
 
     const links: NavLink[] = [
         { href: "/products", label: t("nav.products") },
@@ -223,19 +231,29 @@ export function Header() {
                 </div>
             </Container>
 
-            {/* Mobile drawer. Rendered only while open so it never traps taps. */}
-            {mobileOpen ? (
+            {/* Mobile drawer. Unmounted once closed so it never traps taps. */}
+            {drawerPresent ? (
                 <>
                     <button
                         type="button"
                         aria-label={t("nav.closeMenu")}
                         tabIndex={-1}
                         onClick={() => setMobileOpen(false)}
-                        className="animate-fade fixed inset-x-0 bottom-0 top-17 -z-10 cursor-default bg-scrim/45 backdrop-blur-sm md:hidden"
+                        className={cn(
+                            "fixed inset-x-0 bottom-0 top-17 -z-10 cursor-default bg-scrim/45 backdrop-blur-sm md:hidden",
+                            drawerClosing
+                                ? "animate-fade-out pointer-events-none"
+                                : "animate-fade",
+                        )}
                     />
                     <div
                         id="mobile-navigation"
-                        className="animate-slide-down border-t border-ink-200 bg-surface lg:hidden"
+                        className={cn(
+                            "border-t border-ink-200 bg-surface lg:hidden",
+                            drawerClosing
+                                ? "animate-slide-up pointer-events-none"
+                                : "animate-slide-down",
+                        )}
                     >
                         <Container className="py-3">
                             {isAuthenticated ? (
